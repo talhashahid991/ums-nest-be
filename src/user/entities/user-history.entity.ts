@@ -18,53 +18,38 @@ import { User } from './user.entity';
 @Entity({ name: 'user_history' })
 export class UserHistory {
   @PrimaryGeneratedColumn({ name: 'user_history_id' })
-  @IsOptional()
-  @IsNumber()
   userHistoryId?: number;
 
   @Column({ name: 'user_id' })
-  @IsOptional()
-  @IsNumber()
   userId: number;
 
   @Column({ name: 'email', nullable: false })
   @IsNotEmpty()
-  @IsString()
   email: string;
 
   @Column({ name: 'first_name', nullable: false })
-  @IsString()
   @IsNotEmpty()
   firstName: string;
 
   @Column({ name: 'middle_name', nullable: true })
-  @IsString()
-  @IsOptional()
   middleName: string;
 
   @Column({ name: 'last_name', nullable: false })
-  @IsString()
   @IsNotEmpty()
   lastName: string;
 
   @Column({ name: 'profile_image', nullable: true })
-  @IsString()
-  @IsOptional()
   profileImage: string;
 
   @Column({ type: 'varchar', name: 'username', nullable: false })
-  @IsString()
   @IsNotEmpty()
   username: string;
 
   @Column({ type: 'varchar', name: 'password', nullable: false })
-  @IsString()
   @IsNotEmpty()
   password: string;
 
   @Column({ type: 'date', name: 'date_of_birth', nullable: true })
-  @IsString()
-  @IsOptional()
   dateOfBirth: string;
 
   // @ManyToOne(() => ListOfValues, (x) => x.listOfValuesId)
@@ -74,8 +59,6 @@ export class UserHistory {
     nullable: true,
     default: LID_SUBSCRIBER_ID,
   })
-  @IsNumber()
-  @IsOptional()
   lovUserTypeId: number;
 
   // @ManyToOne(() => ListOfValues, (x) => x.listOfValuesId)
@@ -85,8 +68,6 @@ export class UserHistory {
     name: 'lov_email_verification_type_id',
     default: LID_NOT_VERIFIED_ID,
   })
-  @IsOptional()
-  @IsNumber()
   lovEmailVerificationTypeId: number;
 
   @Column({
@@ -94,39 +75,27 @@ export class UserHistory {
     type: 'timestamptz',
     name: 'email_verification_timestamp',
   })
-  @IsOptional()
-  @IsString()
   emailVerificationTimestamp?: string;
 
   // @ManyToOne(() => ListOfValues, (x) => x.listOfValuesId)
   // @JoinColumn({ name: 'lov_gender_type_id' })
   @Column({ nullable: true, name: 'lov_gender_type_id' })
-  @IsOptional()
-  @IsNumber()
   lovGenderTypeId: number;
 
   // @ManyToOne(() => Package, (x) => x.packageId)
   // @JoinColumn({ name: 'package_id' })
   @Column({ nullable: true, name: 'package_id' })
-  @IsOptional()
-  @IsNumber()
-  packageId: string;
+  packageId: number;
 
   @Column({ type: 'timestamptz', name: 'created_at', nullable: true })
-  @IsOptional()
-  @IsString()
   createdAt: string;
 
   @Column({ type: 'timestamptz', name: 'updated_at', nullable: true })
-  @IsOptional()
-  @IsString()
   updatedAt: string;
 
   // @ManyToOne(() => ListOfValues, (x) => x.listOfValuesId)
   // @JoinColumn({ name: 'lov_status_id' })
   @Column({ name: 'lov_status_id', nullable: false, default: LID_ACTIVE_ID })
-  @IsOptional()
-  @IsNumber()
   lovStatusId: number;
 
   // dml
@@ -138,8 +107,6 @@ export class UserHistory {
     nullable: true,
     default: LID_CREATED_ID,
   })
-  @IsOptional()
-  @IsNumber()
   dmlStatus?: number;
 
   @ManyToOne(() => User, (lov) => lov.userId)

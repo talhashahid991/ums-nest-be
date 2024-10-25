@@ -44,6 +44,30 @@ export class RegisterDataPayloadDto {
   @IsNotEmpty()
   @IsNumber()
   lovGenderTypeId: number;
+
+  @IsOptional()
+  @IsNumber()
+  lovUserTypeId: number;
+
+  @IsOptional()
+  @IsNumber()
+  lovEmailVerificationTypeId: number;
+
+  @IsOptional()
+  @IsNumber()
+  packageId: number;
+
+  @IsOptional()
+  @IsString()
+  createdAt: string;
+
+  @IsOptional()
+  @IsNumber()
+  dmlStatus?: number;
+
+  @IsOptional()
+  @IsString()
+  dmlTimestamp?: string;
 }
 
 export class RegisterDto {
