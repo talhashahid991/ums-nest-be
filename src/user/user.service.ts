@@ -17,6 +17,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Not, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { UserHistory } from './entities/user-history.entity';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UserService {
@@ -25,7 +26,7 @@ export class UserService {
     private readonly mainRepository: Repository<User>,
     @InjectRepository(UserHistory)
     private readonly historyRepositry: Repository<UserHistory>,
-    // private jwtService: JwtService,
+    private jwtService: JwtService,
   ) {}
 
   // user registration
@@ -122,16 +123,16 @@ export class UserService {
   }
 
   async generateToken(data) {
-    // const temToken = await this.jwtService.signAsync(
-    //   {
-    //     ...data,
-    //   },
-    //   {
-    //     secret: process.env.JWT_CONSTANT,
-    //     expiresIn: JWT_EXPIRE_IN,
-    //   },
-    // );
-    // return temToken;
+    const temToken = await this.jwtService.signAsync(
+      {
+        ...data,
+      },
+      {
+        secret: process.env.JWT_CONSTANT,
+        expiresIn: process.env.JWT_EXPIRE_IN,
+      },
+    );
+    return temToken;
     return {};
   }
 }
