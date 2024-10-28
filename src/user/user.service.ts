@@ -102,9 +102,9 @@ export class UserService {
     if (!verifiedUser) {
       return RestResponse.notFound(INVALID_CREDENTIALS);
     }
-    params['user'] = user;
-    params['token'] = await this.generateToken(user);
-    return [params];
+    delete user['password'];
+    let token = await this.generateToken(user);
+    return [{ user, token }];
   }
 
   // find all users
