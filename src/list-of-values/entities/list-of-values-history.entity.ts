@@ -6,7 +6,7 @@ import {
   JoinColumn,
   ManyToOne,
 } from 'typeorm';
-import { ListOfValues } from './list-of-value.entity';
+import { ListOfValues } from './list-of-values.entity';
 
 @Entity({ name: 'list_of_values_history' })
 export class ListOfValuesHistory {
