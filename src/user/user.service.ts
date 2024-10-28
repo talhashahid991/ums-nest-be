@@ -1,15 +1,14 @@
-import {
-  BadRequestException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { RegisterDataPayloadDto } from './dto/register.dto';
 import {
+  EMAIL_IN_USE,
+  INVALID_CREDENTIALS,
   LID_CREATED_ID,
   LID_DELETE_ID,
   LID_SUBSCRIBER_ID,
   LID_VERIFIED_ID,
+  UNVERIFIED_EMAIL,
+  USERNAME_IN_USE,
 } from 'src/utils/constants';
 import { formatDate } from 'src/utils/commonFunctions';
 import * as bcrypt from 'bcrypt';
@@ -18,6 +17,8 @@ import { Not, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { UserHistory } from './entities/user-history.entity';
 import { JwtService } from '@nestjs/jwt';
+import { LoginDataPayloadDto } from './dto/login.dto';
+import { RestResponse } from 'src/utils/restResponse';
 
 @Injectable()
 export class UserService {
@@ -49,16 +50,14 @@ export class UserService {
 
     // check if email already in use
     const isEmailInUse = await this.checkEmail(params.email);
-    // console.log(isEmailInUse);
     if (isEmailInUse) {
-      throw new HttpException('email in use error', HttpStatus.BAD_REQUEST);
+      return RestResponse.error(EMAIL_IN_USE);
     }
 
     // check is username already in use
     const isUsernameInUse = await this.checkUsername(params.username);
-    // console.log(isUsernameInUse);
     if (isUsernameInUse) {
-      throw new HttpException('username in use error', HttpStatus.BAD_REQUEST);
+      return RestResponse.error(USERNAME_IN_USE);
     }
 
     // hash the password
@@ -73,14 +72,42 @@ export class UserService {
       delete res.password;
       return [res];
     } else {
-      // If creation fails, throw a BadRequestException.
-      throw new BadRequestException();
+      // If creation fails, throw an error.
+      return RestResponse.error('Please try again later');
     }
   }
+
+  // user creation by admin
   create(createUserDto: RegisterDataPayloadDto) {
     return 'This action adds a new user';
   }
 
+  // login
+  async login(params: LoginDataPayloadDto) {
+    let user = await this.checkEmail(params.email);
+    if (!user) {
+      user = await this.checkUsername(params.email);
+    }
+    if (!user) {
+      return RestResponse.notFound(INVALID_CREDENTIALS);
+    }
+    if (user.lovEmailVerificationTypeId !== LID_VERIFIED_ID) {
+      // send verification email
+      return RestResponse.notFound(UNVERIFIED_EMAIL);
+    }
+    const verifiedUser = await this.checkPassword(
+      params.password,
+      user['password'],
+    );
+    if (!verifiedUser) {
+      return RestResponse.notFound(INVALID_CREDENTIALS);
+    }
+    params['user'] = user;
+    params['token'] = await this.generateToken(user);
+    return [params];
+  }
+
+  // find all users
   findAll() {
     return `This action returns all user`;
   }
@@ -97,6 +124,7 @@ export class UserService {
     return `This action removes a #${id} user`;
   }
 
+  // checks if email exist
   async checkEmail(email) {
     const result = await this.mainRepository.findOne({
       where: {
@@ -107,6 +135,7 @@ export class UserService {
     return result;
   }
 
+  // checks if username exist
   async checkUsername(username) {
     console.log(username);
     const result = await this.mainRepository.findOne({
@@ -118,10 +147,12 @@ export class UserService {
     return result;
   }
 
+  // checks if password matches
   async checkPassword(password, hashedPassword) {
     return bcrypt.compare(password, hashedPassword);
   }
 
+  // generates token
   async generateToken(data) {
     const temToken = await this.jwtService.signAsync(
       {
@@ -133,6 +164,5 @@ export class UserService {
       },
     );
     return temToken;
-    return {};
   }
 }

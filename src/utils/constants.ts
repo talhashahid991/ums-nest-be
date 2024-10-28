@@ -67,3 +67,9 @@ export const API_METHOD_NOT_ALLOWED_MESSAGE = 'METHOD_NOT_ALLOWED';
 export const API_REQUEST_TIMEOUT_MESSAGE = 'REQUEST_TIMEOUT';
 export const API_INTERNAL_SERVER_ERROR_MESSAGE = 'INTERNAL_SERVER_ERROR';
 export const API_SERVICE_UNAVAILABLE_MESSAGE = 'SERVICE_UNAVAILABLE';
+
+// MESSAGES
+export const INVALID_CREDENTIALS = 'Invalid credentials';
+export const UNVERIFIED_EMAIL = 'Verify your email before proceeding';
+export const EMAIL_IN_USE = 'Email is already in use';
+export const USERNAME_IN_USE = 'Username is already in use';
