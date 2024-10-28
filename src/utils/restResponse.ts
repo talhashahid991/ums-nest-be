@@ -17,7 +17,7 @@ import { ResponseModel } from './responseModel';
 import { isEmpty } from 'lodash';
 
 export class RestResponse {
-  static success = async (dataList: any, receivedMessage: string) => {
+  static success = async (dataList: any, receivedMessage?: string) => {
     if (stringValidation(receivedMessage)) {
       receivedMessage = API_SUCCESS_MESSAGE;
     }

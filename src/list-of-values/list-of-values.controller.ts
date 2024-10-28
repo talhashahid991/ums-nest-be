@@ -6,6 +6,7 @@ import {
   API_NOT_FOUND_MESSAGE,
   API_SUCCESS_MESSAGE,
   LID_CREATED_ID,
+  LID_DELETE_ID,
   LID_UPDATE_ID,
 } from 'src/utils/constants';
 import { isEmpty } from 'lodash';
@@ -13,6 +14,7 @@ import * as dayjs from 'dayjs';
 import { RestResponse } from 'src/utils/restResponse';
 import { FindAllDto } from './dto/find-all.dto';
 import { UpdateDto } from './dto/update.dto';
+import { DeleteDto } from './dto/delete.dto';
 
 @Controller('list-of-values')
 export class ListOfValuesController {
@@ -37,7 +39,7 @@ export class ListOfValuesController {
       if (!isEmpty(res)) {
         return RestResponse.success(res, API_SUCCESS_MESSAGE);
       } else {
-        return RestResponse.notFound(res, API_NOT_FOUND_MESSAGE);
+        return RestResponse.notFound(res);
       }
     } catch (e) {
       throw e;
@@ -61,7 +63,7 @@ export class ListOfValuesController {
       if (!isEmpty(res) && !isEmpty(res[0])) {
         return RestResponse.success(res, API_SUCCESS_MESSAGE);
       } else {
-        return RestResponse.notFound(res, API_NOT_FOUND_MESSAGE);
+        return RestResponse.notFound(res);
       }
     } catch (e) {
       throw e;
@@ -86,7 +88,7 @@ export class ListOfValuesController {
       if (!isEmpty(res)) {
         return RestResponse.success(res, API_SUCCESS_MESSAGE);
       } else {
-        return RestResponse.notFound(res, API_NOT_FOUND_MESSAGE);
+        return RestResponse.notFound(res);
       }
     } catch (e) {
       throw e;
@@ -94,27 +96,27 @@ export class ListOfValuesController {
   }
 
   // @UseGuards(JwtAuthGuard)
-  // // @UseGuards(RoleGuard(Role.FullLovCategoryAccess, Role.DeleteLovCategory))
-  // @Post('delete')
-  // async remove(@Request() req: any, @Body() deleteDto: DeleteDto) {
-  //   try {
-  //     const res = await Promise.all(
-  //       deleteDto.data.map((findPayload) => {
-  //         const standardParams = addStandardParameters(req.user, findPayload);
-  //         return this.mainService.delete({
-  //           ...standardParams,
-  //           dmlStatus: DML_STATUS_DELETE_LOV_ID,
-  //           dmlTimestamps: dayjs().format(),
-  //         });
-  //       }),
-  //     );
-  //     if (!isEmpty(res)) {
-  //       return RestResponse.success(res, SUCCESS_MESSAGE);
-  //     } else {
-  //       return RestResponse.notFound(res, NOT_FOUND_MESSAGE);
-  //     }
-  //   } catch (e) {
-  //     throw e;
-  //   }
-  // }
+  // @UseGuards(RoleGuard(Role.FullLovCategoryAccess, Role.DeleteLovCategory))
+  @Post('delete')
+  async remove(@Request() req: any, @Body() deleteDto: DeleteDto) {
+    try {
+      const res = await Promise.all(
+        deleteDto.data.map((findPayload) => {
+          const standardParams = addStandardParameters(req.user, findPayload);
+          return this.mainService.delete({
+            ...standardParams,
+            dmlStatus: LID_DELETE_ID,
+            dmlTimestamps: dayjs().format(),
+          });
+        }),
+      );
+      if (!isEmpty(res)) {
+        return RestResponse.success(res, API_SUCCESS_MESSAGE);
+      } else {
+        return RestResponse.notFound(res);
+      }
+    } catch (e) {
+      throw e;
+    }
+  }
 }
