@@ -1,5 +1,5 @@
 import { CreateDto } from './dto/create.dto';
-import { Controller, Post, Body, Request } from '@nestjs/common';
+import { Controller, Post, Body, Request, UseGuards } from '@nestjs/common';
 import { ListOfValuesService } from './list-of-values.service';
 import { addStandardParameters } from 'src/utils/commonFunctions';
 import {
@@ -15,12 +15,13 @@ import { RestResponse } from 'src/utils/restResponse';
 import { FindAllDto } from './dto/find-all.dto';
 import { UpdateDto } from './dto/update.dto';
 import { DeleteDto } from './dto/delete.dto';
+import JwtAuthGuard from 'src/auth/jwt-auth.guard';
 
 @Controller('list-of-values')
 export class ListOfValuesController {
   constructor(private readonly mainService: ListOfValuesService) {}
 
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   // @UseGuards(RoleGuard(Role.FullLovCategoryAccess, Role.AddLovCategory))
   @Post('create')
   async create(@Request() req: any, @Body() createDto: CreateDto) {
@@ -46,7 +47,7 @@ export class ListOfValuesController {
     }
   }
 
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   // // @UseGuards(RoleGuard(Role.FullLovCategoryAccess, Role.FindAllLovCategory))
   @Post('findAll')
   async findAll(@Request() req: any, @Body() findAllDto: FindAllDto) {
@@ -70,7 +71,7 @@ export class ListOfValuesController {
     }
   }
 
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   // @UseGuards(RoleGuard(Role.FullLovCategoryAccess, Role.UpdateLovCategory))
   @Post('update')
   async update(@Request() req: any, @Body() updateDto: UpdateDto) {
@@ -95,7 +96,7 @@ export class ListOfValuesController {
     }
   }
 
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   // @UseGuards(RoleGuard(Role.FullLovCategoryAccess, Role.DeleteLovCategory))
   @Post('delete')
   async remove(@Request() req: any, @Body() deleteDto: DeleteDto) {
