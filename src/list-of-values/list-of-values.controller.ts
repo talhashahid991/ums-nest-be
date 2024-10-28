@@ -10,6 +10,7 @@ import {
 import { isEmpty } from 'lodash';
 import * as dayjs from 'dayjs';
 import { RestResponse } from 'src/utils/restResponse';
+import { FindAllDto } from './dto/find-all.dto';
 
 @Controller('list-of-values')
 export class ListOfValuesController {
@@ -41,23 +42,77 @@ export class ListOfValuesController {
     }
   }
 
-  // @Get()
-  // findAll() {
-  //   return this.listOfValuesService.findAll();
+  // @UseGuards(JwtAuthGuard)
+  // // @UseGuards(RoleGuard(Role.FullLovCategoryAccess, Role.FindAllLovCategory))
+  @Post('findAll')
+  async findAll(@Request() req: any, @Body() findAllDto: FindAllDto) {
+    try {
+      const res = await Promise.all(
+        findAllDto?.data?.map((findPayload) => {
+          const standardParams = addStandardParameters(req.user, findPayload);
+          return this.mainService.findAll(
+            standardParams,
+            findAllDto?.pagination,
+          );
+        }),
+      );
+      if (!isEmpty(res) && !isEmpty(res[0])) {
+        return RestResponse.success(res, API_SUCCESS_MESSAGE);
+      } else {
+        return RestResponse.notFound(res, API_NOT_FOUND_MESSAGE);
+      }
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  // @UseGuards(JwtAuthGuard)
+  // // @UseGuards(RoleGuard(Role.FullLovCategoryAccess, Role.UpdateLovCategory))
+  // @Post('update')
+  // async update(@Request() req: any, @Body() updateDto: UpdateDto) {
+  //   try {
+  //     const res = await Promise.all(
+  //       updateDto?.data?.map((updatePayload) => {
+  //         const standardParams = addStandardParameters(req.user, updatePayload);
+  //         return this.mainService.update({
+  //           ...standardParams,
+  //           dmlStatus: DML_STATUS_UPDATE_LOV_ID,
+  //           dmlTimestamps: dayjs().format(),
+  //         });
+  //       }),
+  //     );
+  //     if (!isEmpty(res)) {
+  //       return RestResponse.success(res, SUCCESS_MESSAGE);
+  //     } else {
+  //       return RestResponse.notFound(res, NOT_FOUND_MESSAGE);
+  //     }
+  //   } catch (e) {
+  //     throw e;
+  //   }
   // }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.listOfValuesService.findOne(+id);
-  // }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateListOfValueDto: UpdateListOfValueDto) {
-  //   return this.listOfValuesService.update(+id, updateListOfValueDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.listOfValuesService.remove(+id);
+  // @UseGuards(JwtAuthGuard)
+  // // @UseGuards(RoleGuard(Role.FullLovCategoryAccess, Role.DeleteLovCategory))
+  // @Post('delete')
+  // async remove(@Request() req: any, @Body() deleteDto: DeleteDto) {
+  //   try {
+  //     const res = await Promise.all(
+  //       deleteDto.data.map((findPayload) => {
+  //         const standardParams = addStandardParameters(req.user, findPayload);
+  //         return this.mainService.delete({
+  //           ...standardParams,
+  //           dmlStatus: DML_STATUS_DELETE_LOV_ID,
+  //           dmlTimestamps: dayjs().format(),
+  //         });
+  //       }),
+  //     );
+  //     if (!isEmpty(res)) {
+  //       return RestResponse.success(res, SUCCESS_MESSAGE);
+  //     } else {
+  //       return RestResponse.notFound(res, NOT_FOUND_MESSAGE);
+  //     }
+  //   } catch (e) {
+  //     throw e;
+  //   }
   // }
 }
