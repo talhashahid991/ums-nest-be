@@ -13,6 +13,8 @@ import { RestResponse } from 'src/utils/restResponse';
 import { FindAllDataPayloadDto } from './dto/find-all.dto';
 import { paginationDto } from 'src/utils/commonDtos.dto';
 import { isEmpty, isNumber } from 'lodash';
+import { UpdateDataPayloadDto } from './dto/update.dto';
+import { FindOneDataPayloadDto } from './dto/find-one.dto';
 
 @Injectable()
 export class ListOfValuesService {
@@ -99,6 +101,55 @@ export class ListOfValuesService {
       ? await this.mainRepository.createQueryBuilder('r').where(sql).getMany()
       : [];
     return count ? [query, count] : [];
+  }
+
+  async findOne(params: FindOneDataPayloadDto) {
+    const res = await this.mainRepository.findOne({
+      where: {
+        listOfValuesId: params?.listOfValuesId,
+        dmlStatus: Not(LID_DELETE_ID),
+      },
+    });
+
+    return res;
+  }
+
+  async update(params: UpdateDataPayloadDto) {
+    // check if record exists
+    const ifRecordExists = await this.mainRepository.findOne({
+      where: [
+        {
+          title: params.title,
+          dmlStatus: Not(LID_DELETE_ID),
+          lovCategoryId: params.lovCategoryId,
+          listOfValuesId: Not(params.listOfValuesId),
+        },
+      ],
+    });
+
+    if (ifRecordExists) {
+      return RestResponse.error(params, RECORD_EXISTS);
+    }
+
+    const obj = await this.findOne({
+      listOfValuesId: params.listOfValuesId,
+    });
+
+    // If the record to update does not exist, throw a NotFoundException.
+    if (!obj) {
+      return RestResponse.notFound(params);
+    }
+
+    const res = await this.mainRepository.save({
+      ...params,
+    });
+    await this.historyRepositry.save({ ...res });
+    if (!res) {
+      return [res];
+    } else {
+      // If creation fails, throw a BadRequestException.
+      return RestResponse.error(params, RECORD_EXISTS);
+    }
   }
 
   // findAll() {
