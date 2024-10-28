@@ -73,3 +73,5 @@ export const INVALID_CREDENTIALS = 'Invalid credentials';
 export const UNVERIFIED_EMAIL = 'Verify your email before proceeding';
 export const EMAIL_IN_USE = 'Email is already in use';
 export const USERNAME_IN_USE = 'Username is already in use';
+export const RECORD_EXISTS = 'Record already exists';
+export const TRY_AGAIN_LATER = 'Kindly try again later';
