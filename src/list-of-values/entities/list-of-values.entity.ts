@@ -1,4 +1,5 @@
 // import { LovCategory } from 'src/lov-category/entities/lov-category.entity';
+import { LovCategory } from 'src/lov-category/entities/lov-category.entity';
 import { User } from 'src/user/entities/user.entity';
 import { LID_ACTIVE_ID, LID_CREATED_ID } from 'src/utils/constants';
 import {
@@ -14,8 +15,8 @@ export class ListOfValues {
   @PrimaryGeneratedColumn({ name: 'list_of_values_id' })
   listOfValuesId: number;
 
-  // @ManyToOne(() => LovCategory, (LovCategory) => LovCategory.lovCategoryId)
-  // @JoinColumn({ name: 'lov_category_id' })
+  @ManyToOne(() => LovCategory, (LovCategory) => LovCategory.lovCategoryId)
+  @JoinColumn({ name: 'lov_category_id' })
   @Column({ name: 'lov_category_id' })
   lovCategoryId: number;
 

@@ -57,22 +57,4 @@ export class ListOfValuesHistory {
 
   @Column({ name: 'dml_timestamp', type: 'timestamptz', nullable: true })
   dmlTimestamp: Date;
-
-  // @Column({ name: 'dml_user_id', nullable: true })
-  // dmlUserId: number;
-
-  // @Column({ name: 'dml_activated_role_id', nullable: true })
-  // dmlActivatedRoleId: number;
-
-  // @Column({ name: 'dml_activated_role_title', nullable: true })
-  // dmlActivatedRoleTitle: string;
-
-  // @Column({ name: 'dml_username', nullable: true })
-  // dmlUsername: string;
-
-  // @Column({ name: 'dml_status', nullable: true })
-  // dmlStatus: number;
-
-  // @Column({ name: 'dml_timestamps', type: 'timestamptz', nullable: true })
-  // dmlTimestamps: Date;
 }
