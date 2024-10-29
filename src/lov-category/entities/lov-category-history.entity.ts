@@ -9,12 +9,15 @@ import {
   JoinColumn,
 } from 'typeorm';
 
-@Entity({ name: 'lov_category' })
-export class LovCategory {
-  @PrimaryGeneratedColumn({ name: 'lov_category_id' })
+@Entity({ name: 'lov_category_history' })
+export class LovCategoryHistory {
+  @PrimaryGeneratedColumn({ name: 'lov_category_history_id' })
+  lovCategoryHistoryId: number;
+
+  @Column({ name: 'lov_category_id' })
   lovCategoryId: number;
 
-  @Column({ name: 'title', unique: true })
+  @Column({ name: 'title' })
   title: string;
 
   @Column({ name: 'description', nullable: true })
