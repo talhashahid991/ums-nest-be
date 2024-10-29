@@ -13,6 +13,8 @@ import { RestResponse } from 'src/utils/restResponse';
 import { FindAllDataPayloadDto } from './dto/find-all.dto';
 import { paginationDto } from 'src/utils/commonDtos.dto';
 import { isEmpty, isNumber } from 'lodash';
+import { FindOneDataPayloadDto } from './dto/find-one.dto';
+import { UpdateDataPayloadDto } from './dto/update.dto';
 
 @Injectable()
 export class LovCategoryService {
@@ -83,6 +85,54 @@ export class LovCategoryService {
       ? await this.mainRepository.createQueryBuilder('r').where(sql).getMany()
       : [];
     return count ? [query, count] : [];
+  }
+
+  async findOne(params: FindOneDataPayloadDto) {
+    const res = await this.mainRepository.findOne({
+      where: {
+        lovCategoryId: params?.lovCategoryId,
+        dmlStatus: Not(LID_DELETE_ID),
+      },
+    });
+
+    return res;
+  }
+
+  async update(params: UpdateDataPayloadDto) {
+    // check if record exists
+    const ifRecordExists = await this.mainRepository.findOne({
+      where: [
+        {
+          title: params.title,
+          dmlStatus: Not(LID_DELETE_ID),
+          lovCategoryId: Not(params.lovCategoryId),
+        },
+      ],
+    });
+
+    if (ifRecordExists) {
+      return RestResponse.error(params, RECORD_EXISTS);
+    }
+
+    const obj = await this.findOne({
+      lovCategoryId: params.lovCategoryId,
+    });
+
+    // If the record to update does not exist, throw a NotFoundException.
+    if (!obj) {
+      return RestResponse.notFound(params);
+    }
+
+    const res = await this.mainRepository.save({
+      ...params,
+    });
+    await this.historyRepositry.save({ ...res });
+    if (!res) {
+      return [res];
+    } else {
+      // If creation fails, throw a BadRequestException.
+      return RestResponse.error(params, TRY_AGAIN_LATER);
+    }
   }
 
   // findAll() {
