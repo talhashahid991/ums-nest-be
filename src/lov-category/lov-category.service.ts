@@ -15,6 +15,7 @@ import { paginationDto } from 'src/utils/commonDtos.dto';
 import { isEmpty, isNumber } from 'lodash';
 import { FindOneDataPayloadDto } from './dto/find-one.dto';
 import { UpdateDataPayloadDto } from './dto/update.dto';
+import { DeleteDataPayloadDto } from './dto/delete.dto';
 
 @Injectable()
 export class LovCategoryService {
@@ -135,19 +136,26 @@ export class LovCategoryService {
     }
   }
 
-  // findAll() {
-  //   return `This action returns all lovCategory`;
-  // }
+  async delete(params: DeleteDataPayloadDto) {
+    const obj = await this.findOne({
+      lovCategoryId: params.lovCategoryId,
+    });
 
-  // findOne(id: number) {
-  //   return `This action returns a #${id} lovCategory`;
-  // }
-
-  // update(id: number, updateLovCategoryDto: UpdateLovCategoryDto) {
-  //   return `This action updates a #${id} lovCategory`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} lovCategory`;
-  // }
+    // If the record to update does not exist, throw a NotFoundException.
+    if (!obj) {
+      return RestResponse.notFound(params);
+    }
+    obj.dmlStatus = params['dmlStatus'];
+    obj.dmlTimestamp = params['dmlTimestamp'];
+    const res = await this.mainRepository.save({
+      ...obj,
+    });
+    await this.historyRepositry.save({ ...res });
+    if (res) {
+      return [res];
+    } else {
+      // If creation fails, throw a BadRequestException.
+      return RestResponse.error(params, TRY_AGAIN_LATER);
+    }
+  }
 }
