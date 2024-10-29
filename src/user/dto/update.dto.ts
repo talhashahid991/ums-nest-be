@@ -7,7 +7,7 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { metaDataDto, paginationDto } from 'src/utils/commonDtos.dto';
+import { paginationDto } from 'src/utils/commonDtos.dto';
 
 export class UpdateDataPayloadDto {
   @IsNotEmpty()
@@ -39,7 +39,7 @@ export class UpdateDataPayloadDto {
   applicationRoleStatusLovId: number;
 }
 
-export class UpdateDto extends metaDataDto {
+export class UpdateDto {
   @IsNotEmpty()
   @ValidateNested({ each: true })
   @Type(() => UpdateDataPayloadDto)

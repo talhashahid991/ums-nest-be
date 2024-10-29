@@ -6,7 +6,7 @@ import {
   IsOptional,
   ValidateNested,
 } from 'class-validator';
-import { metaDataDto, paginationDto } from 'src/utils/commonDtos.dto';
+import { paginationDto } from 'src/utils/commonDtos.dto';
 
 export class FindOneDataPayloadDto {
   @IsNotEmpty()
@@ -14,7 +14,7 @@ export class FindOneDataPayloadDto {
   applicationRoleId: number;
 }
 
-export class FindOneDto extends metaDataDto {
+export class FindOneDto {
   @IsNotEmpty()
   @ValidateNested({ each: true })
   @Type(() => FindOneDataPayloadDto)

@@ -7,7 +7,7 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { metaDataDto, paginationDto } from 'src/utils/commonDtos.dto';
+import { paginationDto } from 'src/utils/commonDtos.dto';
 
 export class FindAllDataPayloadDto {
   @IsOptional()
@@ -39,7 +39,7 @@ export class FindAllDataPayloadDto {
   applicationRoleStatusLovId: number;
 }
 
-export class FindAllDto extends metaDataDto {
+export class FindAllDto {
   @IsNotEmpty()
   @ValidateNested({ each: true })
   @Type(() => FindAllDataPayloadDto)
