@@ -1,34 +1,141 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Request } from '@nestjs/common';
 import { LovCategoryService } from './lov-category.service';
-import { CreateLovCategoryDto } from './dto/create-lov-category.dto';
-import { UpdateLovCategoryDto } from './dto/update-lov-category.dto';
+import JwtAuthGuard from 'src/auth/jwt-auth.guard';
+import { addStandardParameters } from 'src/utils/commonFunctions';
+import { CreateDto } from './dto/create.dto';
+import { API_SUCCESS_MESSAGE, LID_CREATED_ID } from 'src/utils/constants';
+import { isEmpty } from 'lodash';
+import * as dayjs from 'dayjs';
+import { RestResponse } from 'src/utils/restResponse';
 
 @Controller('lov-category')
 export class LovCategoryController {
-  constructor(private readonly lovCategoryService: LovCategoryService) {}
+  constructor(private readonly mainService: LovCategoryService) {}
 
-  @Post()
-  create(@Body() createLovCategoryDto: CreateLovCategoryDto) {
-    return this.lovCategoryService.create(createLovCategoryDto);
+  @UseGuards(JwtAuthGuard)
+  // @UseGuards(RoleGuard(Role.FullLovCategoryAccess, Role.AddLovCategory))
+  @Post('create')
+  async create(@Request() req: any, @Body() createDto: CreateDto) {
+    try {
+      const res = await Promise.all(
+        createDto?.data?.map((createPayload) => {
+          const standardParams = addStandardParameters(req.user, createPayload);
+          return this.mainService.create({
+            ...standardParams,
+            dmlStatus: LID_CREATED_ID,
+            dmlTimestamp: dayjs().format(),
+          });
+        }),
+      );
+
+      if (!isEmpty(res)) {
+        return RestResponse.success(res, API_SUCCESS_MESSAGE);
+      } else {
+        return RestResponse.notFound(res);
+      }
+    } catch (e) {
+      throw e;
+    }
   }
 
-  @Get()
-  findAll() {
-    return this.lovCategoryService.findAll();
-  }
+  // @UseGuards(JwtAuthGuard)
+  // // // @UseGuards(RoleGuard(Role.FullLovCategoryAccess, Role.FindAllLovCategory))
+  // @Post('findAll')
+  // async findAll(@Request() req: any, @Body() findAllDto: FindAllDto) {
+  //   try {
+  //     const res = await Promise.all(
+  //       findAllDto?.data?.map((findPayload) => {
+  //         const standardParams = addStandardParameters(req.user, findPayload);
+  //         return this.mainService.findAll(
+  //           standardParams,
+  //           findAllDto?.pagination,
+  //         );
+  //       }),
+  //     );
+  //     if (!isEmpty(res) && !isEmpty(res[0])) {
+  //       return RestResponse.success(res, API_SUCCESS_MESSAGE);
+  //     } else {
+  //       return RestResponse.notFound(res);
+  //     }
+  //   } catch (e) {
+  //     throw e;
+  //   }
+  // }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.lovCategoryService.findOne(+id);
-  }
+  // @UseGuards(JwtAuthGuard)
+  // // @UseGuards(RoleGuard(Role.FullLovCategoryAccess, Role.UpdateLovCategory))
+  // @Post('update')
+  // async update(@Request() req: any, @Body() updateDto: UpdateDto) {
+  //   try {
+  //     const res = await Promise.all(
+  //       updateDto?.data?.map((updatePayload) => {
+  //         const standardParams = addStandardParameters(req.user, updatePayload);
+  //         return this.mainService.update({
+  //           ...standardParams,
+  //           dmlStatus: LID_UPDATE_ID,
+  //           dmlTimestamps: dayjs().format(),
+  //         });
+  //       }),
+  //     );
+  //     if (!isEmpty(res)) {
+  //       return RestResponse.success(res, API_SUCCESS_MESSAGE);
+  //     } else {
+  //       return RestResponse.notFound(res);
+  //     }
+  //   } catch (e) {
+  //     throw e;
+  //   }
+  // }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateLovCategoryDto: UpdateLovCategoryDto) {
-    return this.lovCategoryService.update(+id, updateLovCategoryDto);
-  }
+  // @UseGuards(JwtAuthGuard)
+  // // @UseGuards(RoleGuard(Role.FullLovCategoryAccess, Role.DeleteLovCategory))
+  // @Post('delete')
+  // async remove(@Request() req: any, @Body() deleteDto: DeleteDto) {
+  //   try {
+  //     const res = await Promise.all(
+  //       deleteDto.data.map((findPayload) => {
+  //         const standardParams = addStandardParameters(req.user, findPayload);
+  //         return this.mainService.delete({
+  //           ...standardParams,
+  //           dmlStatus: LID_DELETE_ID,
+  //           dmlTimestamps: dayjs().format(),
+  //         });
+  //       }),
+  //     );
+  //     if (!isEmpty(res)) {
+  //       return RestResponse.success(res, API_SUCCESS_MESSAGE);
+  //     } else {
+  //       return RestResponse.notFound(res);
+  //     }
+  //   } catch (e) {
+  //     throw e;
+  //   }
+  // }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.lovCategoryService.remove(+id);
-  }
+  // constructor(private readonly lovCategoryService: LovCategoryService) {}
+
+  // @Post()
+  // create(@Body() createLovCategoryDto: CreateLovCategoryDto) {
+  //   return this.lovCategoryService.create(createLovCategoryDto);
+  // }
+
+  // @Get()
+  // findAll() {
+  //   return this.lovCategoryService.findAll();
+  // }
+
+  // @Get(':id')
+  // findOne(@Param('id') id: string) {
+  //   return this.lovCategoryService.findOne(+id);
+  // }
+
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateLovCategoryDto: UpdateLovCategoryDto) {
+  //   return this.lovCategoryService.update(+id, updateLovCategoryDto);
+  // }
+
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.lovCategoryService.remove(+id);
+  // }
 }
