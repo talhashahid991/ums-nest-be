@@ -13,6 +13,7 @@ import {
   LID_CREATED_ID,
   LID_ACTIVE_ID,
 } from 'src/utils/constants';
+import { ListOfValues } from 'src/list-of-values/entities/list-of-values.entity';
 
 @Entity({ name: 'user' })
 export class User {
@@ -43,8 +44,8 @@ export class User {
   @Column({ type: 'date', name: 'date_of_birth', nullable: true })
   dateOfBirth?: string;
 
-  // @ManyToOne(() => ListOfValues, (x) => x.listOfValuesId)
-  // @JoinColumn({ name: 'lov_user_type_id' })
+  @ManyToOne(() => ListOfValues, (x) => x.listOfValuesId)
+  @JoinColumn({ name: 'lov_user_type_id' })
   @Column({
     name: 'lov_user_type_id',
     nullable: true,
@@ -52,8 +53,8 @@ export class User {
   })
   lovUserTypeId: number;
 
-  // @ManyToOne(() => ListOfValues, (x) => x.listOfValuesId)
-  // @JoinColumn({ name: 'lov_email_verification_type_id' })
+  @ManyToOne(() => ListOfValues, (x) => x.listOfValuesId)
+  @JoinColumn({ name: 'lov_email_verification_type_id' })
   @Column({
     nullable: true,
     name: 'lov_email_verification_type_id',
@@ -68,8 +69,8 @@ export class User {
   })
   emailVerificationTimestamp?: string;
 
-  // @ManyToOne(() => ListOfValues, (x) => x.listOfValuesId)
-  // @JoinColumn({ name: 'lov_gender_type_id' })
+  @ManyToOne(() => ListOfValues, (x) => x.listOfValuesId)
+  @JoinColumn({ name: 'lov_gender_type_id' })
   @Column({ nullable: true, name: 'lov_gender_type_id' })
   lovGenderTypeId?: number;
 
@@ -84,15 +85,15 @@ export class User {
   @Column({ type: 'timestamptz', name: 'updated_at', nullable: true })
   updatedAt?: string;
 
-  // @ManyToOne(() => ListOfValues, (x) => x.listOfValuesId)
-  // @JoinColumn({ name: 'lov_status_id' })
+  @ManyToOne(() => ListOfValues, (x) => x.listOfValuesId)
+  @JoinColumn({ name: 'lov_status_id' })
   @Column({ name: 'lov_status_id', nullable: false, default: LID_ACTIVE_ID })
   lovStatusId?: number;
 
   // dml
 
-  // @ManyToOne(() => ListOfValues, (lov) => lov.listOfValuesId)
-  // @JoinColumn({ name: 'dml_status' })
+  @ManyToOne(() => ListOfValues, (lov) => lov.listOfValuesId)
+  @JoinColumn({ name: 'dml_status' })
   @Column({
     name: 'dml_status',
     nullable: true,
