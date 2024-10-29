@@ -10,6 +10,9 @@ import {
   TRY_AGAIN_LATER,
 } from 'src/utils/constants';
 import { RestResponse } from 'src/utils/restResponse';
+import { FindAllDataPayloadDto } from './dto/find-all.dto';
+import { paginationDto } from 'src/utils/commonDtos.dto';
+import { isEmpty, isNumber } from 'lodash';
 
 @Injectable()
 export class LovCategoryService {
@@ -43,6 +46,43 @@ export class LovCategoryService {
       // If creation fails, throw a BadRequestException.
       return RestResponse.error(params, TRY_AGAIN_LATER);
     }
+  }
+
+  async findAll(params: FindAllDataPayloadDto, pagination: paginationDto) {
+    let sql = '';
+    // Construct SQL query based on provided filter parameters.
+    if (isNumber(params?.lovCategoryId)) {
+      sql += `r.lovCategoryId=${params?.lovCategoryId} AND `;
+    }
+    if (!isEmpty(params?.title)) {
+      sql += `r.title ilike '%${params?.title}%' AND `;
+    }
+    if (!isEmpty(params?.description)) {
+      sql += `r.description ilike '%${params?.description}%' AND `;
+    }
+
+    sql += `r.dmlStatus != ${LID_DELETE_ID} ORDER BY 1 DESC`;
+
+    // Count the total number of records based on the constructed SQL query.
+    const count = await this.mainRepository
+      .createQueryBuilder('r')
+      .where(sql)
+      .getCount();
+    // Apply pagination if provided and return the filtered and paginated records.
+    if (
+      !isEmpty(pagination) &&
+      pagination?.pageNo >= 0 &&
+      pagination?.itemsPerPage > 0
+    ) {
+      sql += ` OFFSET ${
+        pagination?.pageNo * pagination?.itemsPerPage
+      } ROWS FETCH NEXT ${pagination?.itemsPerPage} ROWS ONLY`;
+    }
+
+    const query = count
+      ? await this.mainRepository.createQueryBuilder('r').where(sql).getMany()
+      : [];
+    return count ? [query, count] : [];
   }
 
   // findAll() {
