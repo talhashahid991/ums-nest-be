@@ -1,3 +1,9 @@
+import {
+  BadRequestException,
+  ForbiddenException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { stringValidation } from './commonFunctions';
 import {
   API_ERROR_CODE,
@@ -28,22 +34,23 @@ export class RestResponse {
     };
   };
 
-  static noContent = async (
-    dataList: any,
-    receivedMessage: string,
-  ): Promise<ResponseModel> => {
-    if (stringValidation(receivedMessage)) {
-      receivedMessage = API_NO_CONTENT_MESSAGE;
-    }
-    if (dataList == null) {
-      dataList = [];
-    }
-    return {
-      message: receivedMessage,
-      statusCode: API_NO_CONTENT_CODE,
-      data: dataList,
-    };
-  };
+  // static noContent = async (
+  //   dataList: any,
+  //   receivedMessage: string,
+  // ): Promise<ResponseModel> => {
+  //   if (stringValidation(receivedMessage)) {
+  //     receivedMessage = API_NO_CONTENT_MESSAGE;
+  //   }
+  //   if (dataList == null) {
+  //     dataList = [];
+  //   }
+  //   throw new
+  //   return {
+  //     message: receivedMessage,
+  //     statusCode: API_NO_CONTENT_CODE,
+  //     data: dataList,
+  //   };
+  // };
 
   static error = async (
     dataList: any,
@@ -53,12 +60,12 @@ export class RestResponse {
     if (stringValidation(receivedMessage)) {
       receivedMessage = API_ERROR_MESSAGE;
     }
-    return {
+    throw new BadRequestException({
       message: receivedMessage,
       statusCode: API_ERROR_CODE,
       path: pathToError,
       data: dataList,
-    };
+    });
   };
 
   static unauthorized = async (
@@ -69,12 +76,12 @@ export class RestResponse {
     if (!stringValidation(receivedMessage)) {
       receivedMessage = API_UNAUTHORIZED_MESSAGE;
     }
-    return {
+    throw new UnauthorizedException({
       message: receivedMessage,
       statusCode: API_UNAUTHORIZED_CODE,
       path: pathToError,
       data: dataList,
-    };
+    });
   };
 
   static forbidden = async (
@@ -85,22 +92,22 @@ export class RestResponse {
     if (!stringValidation(receivedMessage)) {
       receivedMessage = API_FORBIDDEN_MESSAGE;
     }
-    return {
+    throw new ForbiddenException({
       message: receivedMessage,
       statusCode: API_FORBIDDEN_CODE,
       path: pathToError,
       data: dataList,
-    };
+    });
   };
 
   static notFound = async (dataList: any, receivedMessage?: string) => {
     if (!stringValidation(receivedMessage)) {
       receivedMessage = API_NOT_FOUND_MESSAGE;
     }
-    return {
+    throw new NotFoundException({
       message: receivedMessage,
       statusCode: API_NOT_FOUND_CODE,
       data: dataList,
-    };
+    });
   };
 }

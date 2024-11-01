@@ -89,22 +89,22 @@ export class UserService {
       user = await this.checkUsername(params.email);
     }
     if (!user) {
-      return RestResponse.notFound(INVALID_CREDENTIALS);
+      return RestResponse.notFound(params, INVALID_CREDENTIALS);
     }
     if (user.lovEmailVerificationTypeId !== LID_VERIFIED_ID) {
       // send verification email
-      return RestResponse.notFound(UNVERIFIED_EMAIL);
+      return RestResponse.notFound(params, UNVERIFIED_EMAIL);
     }
     const verifiedUser = await this.checkPassword(
       params.password,
       user['password'],
     );
     if (!verifiedUser) {
-      return RestResponse.notFound(INVALID_CREDENTIALS);
+      return RestResponse.notFound(params, INVALID_CREDENTIALS);
     }
     delete user['password'];
     let token = await this.generateToken(user);
-    return [{ user, token }];
+    return [[{ user, token }]];
   }
 
   // find all users
