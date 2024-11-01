@@ -3,6 +3,7 @@ import { RegisterDataPayloadDto } from './dto/register.dto';
 import {
   EMAIL_IN_USE,
   INVALID_CREDENTIALS,
+  LC_VERIFIED,
   LID_CREATED_ID,
   LID_DELETE_ID,
   LID_SUBSCRIBER_ID,
@@ -103,8 +104,9 @@ export class UserService {
       return RestResponse.notFound(params, INVALID_CREDENTIALS);
     }
     delete user['password'];
-    let token = await this.generateToken(user);
-    return [[{ user, token }]];
+    return await this.validateUser(user, params);
+    // let token = await this.generateToken(user);
+    // return [[{ user, token }]];
   }
 
   // find all users
@@ -164,5 +166,26 @@ export class UserService {
       },
     );
     return temToken;
+  }
+
+  // validate user
+  async validateUser(user, params) {
+    // check if user's email is verified
+    if (
+      user?.lovEmailVerificationTypeId === LID_VERIFIED_ID &&
+      user?.emailVerificationTimestamp
+    ) {
+      // generate token
+      let token = await this.generateToken(user);
+      // create response object
+      let response = {
+        case: LC_VERIFIED,
+        user,
+        token,
+      };
+      return [response];
+    } else {
+      return RestResponse.notFound(params, UNVERIFIED_EMAIL);
+    }
   }
 }

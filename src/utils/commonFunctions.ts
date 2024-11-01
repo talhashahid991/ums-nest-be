@@ -12,9 +12,9 @@ export const addStandardParameters = (user: any, item: any): any => {
 };
 
 export const stringValidation = (stringName: string): boolean => {
-  let check = false;
+  let check = true;
   if (!stringName && !isEmpty(stringName) && !isEqual(stringName, '')) {
-    check = true;
+    check = false;
   }
   return check;
 };
