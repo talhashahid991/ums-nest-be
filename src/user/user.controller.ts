@@ -18,6 +18,7 @@ import { isEmpty } from 'lodash';
 import * as dayjs from 'dayjs';
 import { RestResponse } from 'src/utils/restResponse';
 import { LoginDto } from './dto/login.dto';
+import JwtAuthGuard from 'src/auth/jwt-auth.guard';
 
 @Controller('user')
 export class UserController {
@@ -70,4 +71,8 @@ export class UserController {
       throw e;
     }
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('findAll')
+  async findAll() {}
 }
