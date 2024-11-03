@@ -9,5 +9,6 @@ import { UserLogHistory } from './entities/user-log-history.entity';
   imports: [TypeOrmModule.forFeature([UserLog, UserLogHistory])],
   controllers: [UserLogController],
   providers: [UserLogService],
+  exports: [UserLogService],
 })
 export class UserLogModule {}

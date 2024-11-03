@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserHistory } from './entities/user-history.entity';
 import { User } from './entities/user.entity';
 import { JwtModule } from '@nestjs/jwt';
+import { UserLogModule } from 'src/user-log/user-log.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { JwtModule } from '@nestjs/jwt';
       secret: process.env.JWT_CONSTANT,
       signOptions: { expiresIn: process.env.JWT_EXPIRE_IN },
     }),
+    UserLogModule,
   ],
   controllers: [UserController],
   providers: [UserService],
