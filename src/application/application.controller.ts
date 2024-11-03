@@ -14,6 +14,7 @@ import { API_SUCCESS_MESSAGE, LID_CREATED_ID } from 'src/utils/constants';
 import { isEmpty } from 'lodash';
 import * as dayjs from 'dayjs';
 import { RestResponse } from 'src/utils/restResponse';
+import { FindAllDto } from './dto/find-all.dto';
 
 @Controller('application')
 export class ApplicationController {
@@ -45,29 +46,29 @@ export class ApplicationController {
     }
   }
 
-  // @UseGuards(JwtAuthGuard)
-  // // // @UseGuards(RoleGuard(Role.FullLovCategoryAccess, Role.FindAllLovCategory))
-  // @Post('findAll')
-  // async findAll(@Request() req: any, @Body() findAllDto: FindAllDto) {
-  //   try {
-  //     const res = await Promise.all(
-  //       findAllDto?.data?.map((findPayload) => {
-  //         const standardParams = addStandardParameters(req.user, findPayload);
-  //         return this.mainService.findAll(
-  //           standardParams,
-  //           findAllDto?.pagination,
-  //         );
-  //       }),
-  //     );
-  //     if (!isEmpty(res) && !isEmpty(res[0])) {
-  //       return RestResponse.success(res, API_SUCCESS_MESSAGE);
-  //     } else {
-  //       return RestResponse.notFound(res);
-  //     }
-  //   } catch (e) {
-  //     throw e;
-  //   }
-  // }
+  @UseGuards(JwtAuthGuard)
+  // // @UseGuards(RoleGuard(Role.FullLovCategoryAccess, Role.FindAllLovCategory))
+  @Post('findAll')
+  async findAll(@Request() req: any, @Body() findAllDto: FindAllDto) {
+    try {
+      const res = await Promise.all(
+        findAllDto?.data?.map((findPayload) => {
+          const standardParams = addStandardParameters(req.user, findPayload);
+          return this.mainService.findAll(
+            standardParams,
+            findAllDto?.pagination,
+          );
+        }),
+      );
+      if (!isEmpty(res) && !isEmpty(res[0])) {
+        return RestResponse.success(res, API_SUCCESS_MESSAGE);
+      } else {
+        return RestResponse.notFound(res);
+      }
+    } catch (e) {
+      throw e;
+    }
+  }
 
   // @UseGuards(JwtAuthGuard)
   // // @UseGuards(RoleGuard(Role.FullLovCategoryAccess, Role.UpdateLovCategory))
