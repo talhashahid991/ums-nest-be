@@ -15,9 +15,12 @@ import {
 import { ListOfValues } from 'src/list-of-values/entities/list-of-values.entity';
 import { User } from 'src/user/entities/user.entity';
 
-@Entity({ name: 'user_log' })
-export class UserLog {
-  @PrimaryGeneratedColumn({ name: 'user_log_id' })
+@Entity({ name: 'user_log_history' })
+export class UserLogHistory {
+  @PrimaryGeneratedColumn({ name: 'user_log_history_id' })
+  userLogHistoryId: number;
+
+  @Column({ name: 'user_log_id' })
   userLogId: number;
 
   @ManyToOne(() => User, (lov) => lov.userId)
