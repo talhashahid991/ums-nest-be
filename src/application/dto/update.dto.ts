@@ -11,7 +11,7 @@ import {
 export class UpdateDataPayloadDto {
   @IsNotEmpty()
   @IsNumber()
-  listOfValuesId: number;
+  applicationId: number;
 
   @IsNotEmpty()
   @IsString()
@@ -19,27 +19,11 @@ export class UpdateDataPayloadDto {
 
   @IsOptional()
   @IsString()
-  description: string;
+  description?: string;
 
   @IsNotEmpty()
   @IsNumber()
-  lovCategoryId: number;
-
-  @IsNotEmpty()
-  @IsNumber()
-  lovStatusId: number;
-
-  @IsOptional()
-  @IsNumber()
-  sequenceNo: number;
-
-  @IsOptional()
-  @IsString()
-  cssClasses: string;
-
-  @IsOptional()
-  @IsString()
-  cssSeverity: string;
+  lovStatusId?: number;
 }
 
 export class UpdateDto {

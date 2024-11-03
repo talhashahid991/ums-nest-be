@@ -12,35 +12,19 @@ import { paginationDto } from 'src/utils/commonDtos.dto';
 export class FindAllDataPayloadDto {
   @IsOptional()
   @IsNumber()
-  listOfValuesId: number;
+  applicationId?: number;
 
   @IsOptional()
   @IsString()
-  title: string;
+  title?: string;
 
   @IsOptional()
   @IsString()
-  description: string;
+  description?: string;
 
   @IsOptional()
   @IsNumber()
-  lovCategoryId: number;
-
-  @IsOptional()
-  @IsNumber()
-  lovStatusId: number;
-
-  @IsOptional()
-  @IsNumber()
-  sequenceNo: number;
-
-  @IsOptional()
-  @IsString()
-  cssClasses: string;
-
-  @IsOptional()
-  @IsString()
-  cssSeverity: string;
+  lovStatusId?: number;
 }
 
 export class FindAllDto {
