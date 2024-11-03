@@ -15,27 +15,11 @@ export class CreateDataPayloadDto {
 
   @IsOptional()
   @IsString()
-  description: string;
-
-  @IsNotEmpty()
-  @IsNumber()
-  lovCategoryId: number;
+  description?: string;
 
   @IsNotEmpty()
   @IsNumber()
   lovStatusId: number;
-
-  @IsOptional()
-  @IsNumber()
-  sequenceNo: number;
-
-  @IsOptional()
-  @IsString()
-  cssClasses: string;
-
-  @IsOptional()
-  @IsString()
-  cssSeverity: string;
 }
 
 export class CreateDto {
