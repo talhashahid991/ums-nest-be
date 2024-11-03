@@ -19,7 +19,7 @@ export class CreateDataPayloadDto {
 
   @IsOptional()
   @IsString()
-  updatedAt: string;
+  updatedAt?: string;
 
   @IsOptional()
   @IsNumber()
