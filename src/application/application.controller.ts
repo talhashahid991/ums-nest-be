@@ -1,34 +1,121 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import { ApplicationService } from './application.service';
-import { CreateApplicationDto } from './dto/create-application.dto';
-import { UpdateApplicationDto } from './dto/update-application.dto';
+import JwtAuthGuard from 'src/auth/jwt-auth.guard';
+import { CreateDto } from './dto/create.dto';
+import { addStandardParameters } from 'src/utils/commonFunctions';
+import { API_SUCCESS_MESSAGE, LID_CREATED_ID } from 'src/utils/constants';
+import { isEmpty } from 'lodash';
+import * as dayjs from 'dayjs';
+import { RestResponse } from 'src/utils/restResponse';
 
 @Controller('application')
 export class ApplicationController {
-  constructor(private readonly applicationService: ApplicationService) {}
+  constructor(private readonly mainService: ApplicationService) {}
 
-  @Post()
-  create(@Body() createApplicationDto: CreateApplicationDto) {
-    return this.applicationService.create(createApplicationDto);
+  @UseGuards(JwtAuthGuard)
+  // @UseGuards(RoleGuard(Role.FullLovCategoryAccess, Role.AddLovCategory))
+  @Post('create')
+  async create(@Request() req: any, @Body() createDto: CreateDto) {
+    try {
+      const res = await Promise.all(
+        createDto?.data?.map((createPayload) => {
+          const standardParams = addStandardParameters(req.user, createPayload);
+          return this.mainService.create({
+            ...standardParams,
+            dmlStatus: LID_CREATED_ID,
+            dmlTimestamp: dayjs().format(),
+          });
+        }),
+      );
+
+      if (!isEmpty(res)) {
+        return RestResponse.success(res, API_SUCCESS_MESSAGE);
+      } else {
+        return RestResponse.notFound(res);
+      }
+    } catch (e) {
+      throw e;
+    }
   }
 
-  @Get()
-  findAll() {
-    return this.applicationService.findAll();
-  }
+  // @UseGuards(JwtAuthGuard)
+  // // // @UseGuards(RoleGuard(Role.FullLovCategoryAccess, Role.FindAllLovCategory))
+  // @Post('findAll')
+  // async findAll(@Request() req: any, @Body() findAllDto: FindAllDto) {
+  //   try {
+  //     const res = await Promise.all(
+  //       findAllDto?.data?.map((findPayload) => {
+  //         const standardParams = addStandardParameters(req.user, findPayload);
+  //         return this.mainService.findAll(
+  //           standardParams,
+  //           findAllDto?.pagination,
+  //         );
+  //       }),
+  //     );
+  //     if (!isEmpty(res) && !isEmpty(res[0])) {
+  //       return RestResponse.success(res, API_SUCCESS_MESSAGE);
+  //     } else {
+  //       return RestResponse.notFound(res);
+  //     }
+  //   } catch (e) {
+  //     throw e;
+  //   }
+  // }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.applicationService.findOne(+id);
-  }
+  // @UseGuards(JwtAuthGuard)
+  // // @UseGuards(RoleGuard(Role.FullLovCategoryAccess, Role.UpdateLovCategory))
+  // @Post('update')
+  // async update(@Request() req: any, @Body() updateDto: UpdateDto) {
+  //   try {
+  //     const res = await Promise.all(
+  //       updateDto?.data?.map((updatePayload) => {
+  //         const standardParams = addStandardParameters(req.user, updatePayload);
+  //         return this.mainService.update({
+  //           ...standardParams,
+  //           dmlStatus: LID_UPDATE_ID,
+  //           dmlTimestamps: dayjs().format(),
+  //         });
+  //       }),
+  //     );
+  //     if (!isEmpty(res)) {
+  //       return RestResponse.success(res, API_SUCCESS_MESSAGE);
+  //     } else {
+  //       return RestResponse.notFound(res);
+  //     }
+  //   } catch (e) {
+  //     throw e;
+  //   }
+  // }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateApplicationDto: UpdateApplicationDto) {
-    return this.applicationService.update(+id, updateApplicationDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.applicationService.remove(+id);
-  }
+  // @UseGuards(JwtAuthGuard)
+  // // @UseGuards(RoleGuard(Role.FullLovCategoryAccess, Role.DeleteLovCategory))
+  // @Post('delete')
+  // async remove(@Request() req: any, @Body() deleteDto: DeleteDto) {
+  //   try {
+  //     const res = await Promise.all(
+  //       deleteDto.data.map((findPayload) => {
+  //         const standardParams = addStandardParameters(req.user, findPayload);
+  //         return this.mainService.delete({
+  //           ...standardParams,
+  //           dmlStatus: LID_DELETE_ID,
+  //           dmlTimestamps: dayjs().format(),
+  //         });
+  //       }),
+  //     );
+  //     if (!isEmpty(res)) {
+  //       return RestResponse.success(res, API_SUCCESS_MESSAGE);
+  //     } else {
+  //       return RestResponse.notFound(res);
+  //     }
+  //   } catch (e) {
+  //     throw e;
+  //   }
+  // }
 }
