@@ -21,6 +21,9 @@ import { JwtService } from '@nestjs/jwt';
 import { LoginDataPayloadDto } from './dto/login.dto';
 import { RestResponse } from 'src/utils/restResponse';
 import { UserLogService } from 'src/user-log/user-log.service';
+import { FindAllDataPayloadDto } from './dto/find-all.dto';
+import { paginationDto } from 'src/utils/commonDtos.dto';
+import { isEmpty, isNumber } from 'lodash';
 
 @Injectable()
 export class UserService {
@@ -80,11 +83,6 @@ export class UserService {
     }
   }
 
-  // user creation by admin
-  create(createUserDto: RegisterDataPayloadDto) {
-    return 'This action adds a new user';
-  }
-
   // login
   async login(params: LoginDataPayloadDto) {
     let user = await this.checkEmail(params.email);
@@ -111,22 +109,174 @@ export class UserService {
     // return [[{ user, token }]];
   }
 
-  // find all users
-  findAll() {
-    return `This action returns all user`;
+  // user creation by admin
+  // async create(params: CreateDataPayloadDto) {
+  //   // check if record exists
+  //   const ifRecordExists = await this.mainRepository.findOne({
+  //     where: [
+  //       {
+  //         title: params.title,
+  //         dmlStatus: Not(LID_DELETE_ID),
+  //         lovCategoryId: params.lovCategoryId,
+  //       },
+  //     ],
+  //   });
+  //   if (ifRecordExists) {
+  //     return RestResponse.notFound(params, RECORD_EXISTS);
+  //   }
+  //   // create a new record
+  //   const res = await this.mainRepository.save({ ...params });
+  //   // create history record
+  //   await this.historyRepositry.save({ ...params });
+  //   if (res) {
+  //     return [res];
+  //   } else {
+  //     // If creation fails, throw a BadRequestException.
+  //     return RestResponse.error(params, TRY_AGAIN_LATER);
+  //   }
+  // }
+
+  async findAll(params: FindAllDataPayloadDto, pagination: paginationDto) {
+    let sql = '';
+    // Construct SQL query based on provided filter parameters.
+    if (isNumber(params?.userId)) {
+      sql += `r.userId=${params?.userId} AND `;
+    }
+    if (!isEmpty(params?.email)) {
+      sql += `r.email ilike '%${params?.email}%' AND `;
+    }
+    if (!isEmpty(params?.firstName)) {
+      sql += `r.firstName ilike '%${params?.firstName}%' AND `;
+    }
+    if (!isEmpty(params?.middleName)) {
+      sql += `r.middleName ilike '%${params?.middleName}%' AND `;
+    }
+    if (!isEmpty(params?.lastName)) {
+      sql += `r.lastName ilike '%${params?.lastName}%' AND `;
+    }
+    if (!isEmpty(params?.profileImage)) {
+      sql += `r.profileImage ilike '%${params?.profileImage}%' AND `;
+    }
+    if (!isEmpty(params?.username)) {
+      sql += `r.username ilike '%${params?.username}%' AND `;
+    }
+    if (!isEmpty(params?.dateOfBirth)) {
+      sql += `r.dateOfBirth ilike '%${params?.dateOfBirth}%' AND `;
+    }
+    if (!isEmpty(params?.lovGenderTypeId)) {
+      sql += `r.lovGenderTypeId=${params?.lovGenderTypeId} AND `;
+    }
+    if (!isEmpty(params?.lovUserTypeId)) {
+      sql += `r.lovUserTypeId=${params?.lovUserTypeId} AND `;
+    }
+    if (!isEmpty(params?.lovEmailVerificationTypeId)) {
+      sql += `r.lovEmailVerificationTypeId=${params?.lovEmailVerificationTypeId} AND `;
+    }
+    if (!isEmpty(params?.packageId)) {
+      sql += `r.packageId=${params?.packageId} AND `;
+    }
+    if (!isEmpty(params?.lovEmailVerificationTypeId)) {
+      sql += `r.lovEmailVerificationTypeId=${params?.lovEmailVerificationTypeId} AND `;
+    }
+    if (!isEmpty(params?.createdAt)) {
+      sql += `r.createdAt ilike '%${params?.createdAt}%' AND `;
+    }
+
+    sql += `r.dmlStatus != ${LID_DELETE_ID} ORDER BY 1 DESC`;
+
+    // Count the total number of records based on the constructed SQL query.
+    const count = await this.mainRepository
+      .createQueryBuilder('r')
+      .where(sql)
+      .getCount();
+    // Apply pagination if provided and return the filtered and paginated records.
+    if (
+      !isEmpty(pagination) &&
+      pagination?.pageNo >= 0 &&
+      pagination?.itemsPerPage > 0
+    ) {
+      sql += ` OFFSET ${
+        pagination?.pageNo * pagination?.itemsPerPage
+      } ROWS FETCH NEXT ${pagination?.itemsPerPage} ROWS ONLY`;
+    }
+
+    const query = count
+      ? await this.mainRepository.createQueryBuilder('r').where(sql).getMany()
+      : [];
+    return count ? [query, count] : [];
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
+  // async findOne(params: FindOneDataPayloadDto) {
+  //   const res = await this.mainRepository.findOne({
+  //     where: {
+  //       listOfValuesId: params?.listOfValuesId,
+  //       dmlStatus: Not(LID_DELETE_ID),
+  //     },
+  //   });
 
-  update(id: number) {
-    return `This action updates a #${id} user`;
-  }
+  //   return res;
+  // }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
-  }
+  // async update(params: UpdateDataPayloadDto) {
+  //   // check if record exists
+  //   const ifRecordExists = await this.mainRepository.findOne({
+  //     where: [
+  //       {
+  //         title: params.title,
+  //         dmlStatus: Not(LID_DELETE_ID),
+  //         lovCategoryId: params.lovCategoryId,
+  //         listOfValuesId: Not(params.listOfValuesId),
+  //       },
+  //     ],
+  //   });
+
+  //   if (ifRecordExists) {
+  //     return RestResponse.error(params, RECORD_EXISTS);
+  //   }
+
+  //   const obj = await this.findOne({
+  //     listOfValuesId: params.listOfValuesId,
+  //   });
+
+  //   // If the record to update does not exist, throw a NotFoundException.
+  //   if (!obj) {
+  //     return RestResponse.notFound(params);
+  //   }
+
+  //   const res = await this.mainRepository.save({
+  //     ...params,
+  //   });
+  //   await this.historyRepositry.save({ ...res });
+  //   if (!res) {
+  //     return [res];
+  //   } else {
+  //     // If creation fails, throw a BadRequestException.
+  //     return RestResponse.error(params, TRY_AGAIN_LATER);
+  //   }
+  // }
+
+  // async delete(params: DeleteDataPayloadDto) {
+  //   const obj = await this.findOne({
+  //     listOfValuesId: params.listOfValuesId,
+  //   });
+
+  //   // If the record to update does not exist, throw a NotFoundException.
+  //   if (!obj) {
+  //     return RestResponse.notFound(params);
+  //   }
+  //   obj.dmlStatus = params['dmlStatus'];
+  //   obj.dmlTimestamp = params['dmlTimestamp'];
+  //   const res = await this.mainRepository.save({
+  //     ...obj,
+  //   });
+  //   await this.historyRepositry.save({ ...res });
+  //   if (res) {
+  //     return [res];
+  //   } else {
+  //     // If creation fails, throw a BadRequestException.
+  //     return RestResponse.error(params, TRY_AGAIN_LATER);
+  //   }
+  // }
 
   // checks if email exist
   async checkEmail(email) {

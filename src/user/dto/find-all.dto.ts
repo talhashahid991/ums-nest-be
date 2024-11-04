@@ -10,33 +10,57 @@ import {
 import { paginationDto } from 'src/utils/commonDtos.dto';
 
 export class FindAllDataPayloadDto {
-  @IsOptional()
+  @IsNotEmpty()
   @IsNumber()
-  applicationRoleId: number;
+  userId?: number;
 
-  @IsOptional()
-  @IsNumber()
-  applicationId: number;
+  @IsNotEmpty()
+  @IsString()
+  email?: string;
 
-  @IsOptional()
-  @IsNumber()
-  applicationRoleCategoryId: number;
+  @IsNotEmpty()
+  @IsString()
+  firstName?: string;
 
   @IsOptional()
   @IsString()
-  title: string;
+  middleName?: string;
+
+  @IsNotEmpty()
+  @IsString()
+  lastName?: string;
 
   @IsOptional()
   @IsString()
-  description?: string;
+  profileImage?: string;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
-  role: string;
+  username?: string;
+
+  @IsString()
+  @IsOptional()
+  dateOfBirth?: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  lovGenderTypeId?: number;
 
   @IsOptional()
   @IsNumber()
-  applicationRoleStatusLovId: number;
+  lovUserTypeId?: number;
+
+  @IsOptional()
+  @IsNumber()
+  lovEmailVerificationTypeId?: number;
+
+  @IsOptional()
+  @IsNumber()
+  packageId?: number;
+
+  @IsOptional()
+  @IsString()
+  createdAt?: string;
 }
 
 export class FindAllDto {
