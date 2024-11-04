@@ -9,6 +9,8 @@ import {
   LID_DELETE_ID,
   LID_SUBSCRIBER_ID,
   LID_VERIFIED_ID,
+  RECORD_EXISTS,
+  TRY_AGAIN_LATER,
   UNVERIFIED_EMAIL,
   USERNAME_IN_USE,
 } from 'src/utils/constants';
@@ -24,6 +26,7 @@ import { UserLogService } from 'src/user-log/user-log.service';
 import { FindAllDataPayloadDto } from './dto/find-all.dto';
 import { paginationDto } from 'src/utils/commonDtos.dto';
 import { isEmpty, isNumber } from 'lodash';
+import { CreateDataPayloadDto } from './dto/create.dto';
 
 @Injectable()
 export class UserService {
@@ -110,31 +113,31 @@ export class UserService {
   }
 
   // user creation by admin
-  // async create(params: CreateDataPayloadDto) {
-  //   // check if record exists
-  //   const ifRecordExists = await this.mainRepository.findOne({
-  //     where: [
-  //       {
-  //         title: params.title,
-  //         dmlStatus: Not(LID_DELETE_ID),
-  //         lovCategoryId: params.lovCategoryId,
-  //       },
-  //     ],
-  //   });
-  //   if (ifRecordExists) {
-  //     return RestResponse.notFound(params, RECORD_EXISTS);
-  //   }
-  //   // create a new record
-  //   const res = await this.mainRepository.save({ ...params });
-  //   // create history record
-  //   await this.historyRepositry.save({ ...params });
-  //   if (res) {
-  //     return [res];
-  //   } else {
-  //     // If creation fails, throw a BadRequestException.
-  //     return RestResponse.error(params, TRY_AGAIN_LATER);
-  //   }
-  // }
+  async create(params: CreateDataPayloadDto) {
+    // check if record exists
+    const ifRecordExists = await this.mainRepository.findOne({
+      where: [
+        {
+          username: params.username,
+          email: params.email,
+          dmlStatus: Not(LID_DELETE_ID),
+        },
+      ],
+    });
+    if (ifRecordExists) {
+      return RestResponse.notFound(params, RECORD_EXISTS);
+    }
+    // create a new record
+    const res = await this.mainRepository.save({ ...params });
+    // create history record
+    await this.historyRepositry.save({ ...params });
+    if (res) {
+      return [res];
+    } else {
+      // If creation fails, throw a BadRequestException.
+      return RestResponse.error(params, TRY_AGAIN_LATER);
+    }
+  }
 
   async findAll(params: FindAllDataPayloadDto, pagination: paginationDto) {
     let sql = '';
