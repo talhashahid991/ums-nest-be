@@ -1,3 +1,4 @@
+import { User } from 'src/user/entities/user.entity';
 import { Injectable } from '@nestjs/common';
 import { RegisterDataPayloadDto } from './dto/register.dto';
 import {
@@ -15,7 +16,6 @@ import { formatDate } from 'src/utils/commonFunctions';
 import * as bcrypt from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Not, Repository } from 'typeorm';
-import { User } from './entities/user.entity';
 import { UserHistory } from './entities/user-history.entity';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDataPayloadDto } from './dto/login.dto';
@@ -280,24 +280,36 @@ export class UserService {
 
   // checks if email exist
   async checkEmail(email) {
-    const result = await this.mainRepository.findOne({
-      where: {
-        email: email,
-        dmlStatus: Not(LID_DELETE_ID),
-      },
-    });
+    // const result = await this.mainRepository.findOne({
+    //   where: {
+    //     email: email,
+    //     dmlStatus: Not(LID_DELETE_ID),
+    //   },
+    // });
+    const sql = `r.email = '${email}' AND r.dmlStatus != ${LID_DELETE_ID} ORDER BY 1 DESC`;
+    const result = await this.mainRepository
+      .createQueryBuilder('r')
+      .where(sql)
+      .addSelect('r.password')
+      .getOne();
     return result;
   }
 
   // checks if username exist
   async checkUsername(username) {
     console.log(username);
-    const result = await this.mainRepository.findOne({
-      where: {
-        username: username,
-        dmlStatus: Not(LID_DELETE_ID),
-      },
-    });
+    // const result = await this.mainRepository.findOne({
+    //   where: {
+    //     username: username,
+    //     dmlStatus: Not(LID_DELETE_ID),
+    //   },
+    // });
+    const sql = `r.username = '${username}' AND r.dmlStatus != ${LID_DELETE_ID} ORDER BY 1 DESC`;
+    const result = await this.mainRepository
+      .createQueryBuilder('r')
+      .where(sql)
+      .addSelect('r.password')
+      .getOne();
     return result;
   }
 

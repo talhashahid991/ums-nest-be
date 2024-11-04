@@ -1,24 +1,23 @@
 import { Type } from 'class-transformer';
 import {
   IsArray,
-  IsNotEmpty,
-  IsNumber,
   IsOptional,
+  IsNumber,
   IsString,
   ValidateNested,
 } from 'class-validator';
 import { paginationDto } from 'src/utils/commonDtos.dto';
 
 export class FindAllDataPayloadDto {
-  @IsNotEmpty()
+  @IsOptional()
   @IsNumber()
   userId?: number;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   email?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   firstName?: string;
 
@@ -26,7 +25,7 @@ export class FindAllDataPayloadDto {
   @IsString()
   middleName?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   lastName?: string;
 
@@ -34,7 +33,7 @@ export class FindAllDataPayloadDto {
   @IsString()
   profileImage?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   username?: string;
 
@@ -42,7 +41,7 @@ export class FindAllDataPayloadDto {
   @IsOptional()
   dateOfBirth?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsNumber()
   lovGenderTypeId?: number;
 
@@ -64,7 +63,7 @@ export class FindAllDataPayloadDto {
 }
 
 export class FindAllDto {
-  @IsNotEmpty()
+  @IsOptional()
   @ValidateNested({ each: true })
   @Type(() => FindAllDataPayloadDto)
   @IsArray()
