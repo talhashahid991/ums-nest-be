@@ -201,7 +201,12 @@ export class UserService {
     }
 
     const query = count
-      ? await this.mainRepository.createQueryBuilder('r').where(sql).getMany()
+      ? await this.mainRepository
+          .createQueryBuilder('r')
+          .where(sql)
+          .leftJoinAndSelect('r.lovStatusId', 'lovStatusId')
+          .leftJoinAndSelect('r.lovUserTypeId', 'lovUserTypeId')
+          .getMany()
       : [];
     return count ? [query, count] : [];
   }
@@ -291,6 +296,8 @@ export class UserService {
       .createQueryBuilder('r')
       .where(sql)
       .addSelect('r.password')
+      .leftJoinAndSelect('r.lovStatusId', 'lovStatusId')
+      .leftJoinAndSelect('r.lovUserTypeId', 'lovUserTypeId')
       .getOne();
     return result;
   }
@@ -309,6 +316,8 @@ export class UserService {
       .createQueryBuilder('r')
       .where(sql)
       .addSelect('r.password')
+      .leftJoinAndSelect('r.lovStatusId', 'lovStatusId')
+      .leftJoinAndSelect('r.lovUserTypeId', 'lovUserTypeId')
       .getOne();
     return result;
   }
