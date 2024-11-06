@@ -8,6 +8,7 @@ import { LovCategoryModule } from './lov-category/lov-category.module';
 import { UserLogModule } from './user-log/user-log.module';
 import { ApplicationModule } from './application/application.module';
 import * as dotenv from 'dotenv';
+import { ApplicationRoleModule } from './application-role/application-role.module';
 
 dotenv.config();
 
@@ -29,6 +30,7 @@ dotenv.config();
     LovCategoryModule,
     UserLogModule,
     ApplicationModule,
+    ApplicationRoleModule,
   ],
   controllers: [AppController],
   providers: [AppService],

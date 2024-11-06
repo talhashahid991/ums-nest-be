@@ -12,4 +12,4 @@ import { ApplicationRoleHistory } from './entities/application-role-history.enti
   controllers: [ApplicationRoleController],
   providers: [ApplicationRoleService],
 })
-export class ApplicationModule {}
+export class ApplicationRoleModule {}
