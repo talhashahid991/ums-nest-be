@@ -87,7 +87,12 @@ export class ApplicationRoleService {
     }
 
     const query = count
-      ? await this.mainRepository.createQueryBuilder('r').where(sql).getMany()
+      ? await this.mainRepository
+          .createQueryBuilder('r')
+          .where(sql)
+          .leftJoinAndSelect('r.lovStatusId', 'lovStatusId')
+          .leftJoinAndSelect('r.applicationId', 'applicationId')
+          .getMany()
       : [];
     return count ? [query, count] : [];
   }
