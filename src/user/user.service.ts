@@ -130,7 +130,7 @@ export class UserService {
     // create a new record
     const res = await this.mainRepository.save({ ...params });
     // create history record
-    await this.historyRepositry.save({ ...params });
+    await this.historyRepositry.save({ ...res });
     if (res) {
       return [res];
     } else {
