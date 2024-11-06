@@ -61,6 +61,9 @@ export class ApplicationRoleService {
     if (!isEmpty(params?.description)) {
       sql += `r.description ilike '%${params?.description}%' AND `;
     }
+    if (!isEmpty(params?.applicationId)) {
+      sql += `r.applicationId=${params?.applicationId} AND `;
+    }
     if (!isEmpty(params?.lovStatusId)) {
       sql += `r.lovStatusId=${params?.lovStatusId} AND `;
     }

@@ -24,6 +24,10 @@ export class FindAllDataPayloadDto {
 
   @IsOptional()
   @IsNumber()
+  applicationId?: number;
+
+  @IsOptional()
+  @IsNumber()
   lovStatusId?: number;
 }
 
