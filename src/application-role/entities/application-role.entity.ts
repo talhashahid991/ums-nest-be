@@ -1,3 +1,4 @@
+import { Application } from 'src/application/entities/application.entity';
 import { ListOfValues } from 'src/list-of-values/entities/list-of-values.entity';
 import { LovCategory } from 'src/lov-category/entities/lov-category.entity';
 import { User } from 'src/user/entities/user.entity';
@@ -20,6 +21,13 @@ export class ApplicationRole {
 
   @Column({ name: 'description', nullable: true })
   description: string;
+
+  @ManyToOne(() => Application, (x) => x.applicationId)
+  @JoinColumn({ name: 'application_id' })
+  @Column({
+    name: 'application_id',
+  })
+  applicationId: number;
 
   @ManyToOne(() => ListOfValues, (Lov) => Lov.listOfValuesId)
   @JoinColumn({ name: 'lov_status_id' })
