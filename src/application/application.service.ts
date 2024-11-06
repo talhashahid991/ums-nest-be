@@ -84,7 +84,11 @@ export class ApplicationService {
     }
 
     const query = count
-      ? await this.mainRepository.createQueryBuilder('r').where(sql).getMany()
+      ? await this.mainRepository
+          .createQueryBuilder('r')
+          .where(sql)
+          .leftJoinAndSelect('r.lovStatusId', 'lovStatusId')
+          .getMany()
       : [];
     return count ? [query, count] : [];
   }
