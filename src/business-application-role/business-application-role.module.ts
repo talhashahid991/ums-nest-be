@@ -1,13 +1,18 @@
 import { Module } from '@nestjs/common';
-import { BusinessRoleService } from './business-application-role.service';
-import { BusinessRoleController } from './business-application-role.controller';
+import { BusinessApplicationRoleService } from './business-application-role.service';
+import { BusinessApplicationRoleController } from './business-application-role.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { BusinessRole } from './entities/business-application-role.entity';
-import { BusinessRoleHistory } from './entities/business-application-role-history.entity';
+import { BusinessApplicationRole } from './entities/business-application-role.entity';
+import { BusinessApplicationRoleHistory } from './entities/business-application-role-history.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([BusinessRole, BusinessRoleHistory])],
-  controllers: [BusinessRoleController],
-  providers: [BusinessRoleService],
+  imports: [
+    TypeOrmModule.forFeature([
+      BusinessApplicationRole,
+      BusinessApplicationRoleHistory,
+    ]),
+  ],
+  controllers: [BusinessApplicationRoleController],
+  providers: [BusinessApplicationRoleService],
 })
 export class BusinessRoleModule {}
