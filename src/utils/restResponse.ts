@@ -101,7 +101,7 @@ export class RestResponse {
   };
 
   static notFound = async (dataList: any, receivedMessage?: string) => {
-    if (!stringValidation(receivedMessage)) {
+    if (stringValidation(receivedMessage)) {
       receivedMessage = API_NOT_FOUND_MESSAGE;
     }
     throw new NotFoundException({
