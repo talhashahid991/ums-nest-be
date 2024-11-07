@@ -10,12 +10,12 @@ import {
 
 export class CreateDataPayloadDto {
   @IsNotEmpty()
-  @IsString()
-  title: string;
+  @IsNumber()
+  businessRoleId: number;
 
   @IsOptional()
-  @IsString()
-  description?: string;
+  @IsNumber()
+  applicationRoleId: number;
 
   @IsNotEmpty()
   @IsNumber()

@@ -10,7 +10,7 @@ import {
 export class FindOneDataPayloadDto {
   @IsNotEmpty()
   @IsNumber()
-  businessRoleId: number;
+  businessApplicationRoleId: number;
 }
 
 export class FindOneDto {

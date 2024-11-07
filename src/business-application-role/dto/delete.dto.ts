@@ -4,7 +4,7 @@ import { IsArray, IsNotEmpty, IsNumber, ValidateNested } from 'class-validator';
 export class DeleteDataPayloadDto {
   @IsNotEmpty()
   @IsNumber()
-  businessRoleId: number;
+  businessApplicationRoleId: number;
 }
 
 export class DeleteDto {

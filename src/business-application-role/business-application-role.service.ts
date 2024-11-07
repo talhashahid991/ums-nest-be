@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BusinessRole } from './entities/business-application-role.entity';
+import { BusinessApplicationRole } from './entities/business-application-role.entity';
 import { Not, Repository } from 'typeorm';
-import { BusinessRoleHistory } from './entities/business-application-role-history.entity';
+import { BusinessApplicationRoleHistory } from './entities/business-application-role-history.entity';
 import { CreateDataPayloadDto } from './dto/create.dto';
 import {
   LID_DELETE_ID,
@@ -16,12 +16,12 @@ import { isEmpty, isNumber } from 'lodash';
 import { FindOneDataPayloadDto } from './dto/find-one.dto';
 
 @Injectable()
-export class BusinessRoleService {
+export class BusinessApplicationRoleService {
   constructor(
-    @InjectRepository(BusinessRole)
-    private readonly mainRepository: Repository<BusinessRole>,
-    @InjectRepository(BusinessRoleHistory)
-    private readonly historyRepositry: Repository<BusinessRoleHistory>,
+    @InjectRepository(BusinessApplicationRole)
+    private readonly mainRepository: Repository<BusinessApplicationRole>,
+    @InjectRepository(BusinessApplicationRoleHistory)
+    private readonly historyRepositry: Repository<BusinessApplicationRoleHistory>,
   ) {}
 
   async create(params: CreateDataPayloadDto) {
@@ -29,7 +29,8 @@ export class BusinessRoleService {
     const ifRecordExists = await this.mainRepository.findOne({
       where: [
         {
-          title: params.title,
+          businessRoleId: params.businessRoleId,
+          applicationRoleId: params.applicationRoleId,
           dmlStatus: Not(LID_DELETE_ID),
         },
       ],
@@ -52,14 +53,14 @@ export class BusinessRoleService {
   async findAll(params: FindAllDataPayloadDto, pagination: paginationDto) {
     let sql = '';
     // Construct SQL query based on provided filter parameters.
+    if (isNumber(params?.businessApplicationRoleId)) {
+      sql += `r.businessApplicationRoleId=${params?.businessApplicationRoleId} AND `;
+    }
     if (isNumber(params?.businessRoleId)) {
       sql += `r.businessRoleId=${params?.businessRoleId} AND `;
     }
-    if (!isEmpty(params?.title)) {
-      sql += `r.title ilike '%${params?.title}%' AND `;
-    }
-    if (!isEmpty(params?.description)) {
-      sql += `r.description ilike '%${params?.description}%' AND `;
+    if (isNumber(params?.applicationRoleId)) {
+      sql += `r.applicationRoleId=${params?.applicationRoleId} AND `;
     }
     if (!isEmpty(params?.applicationId)) {
       sql += `r.applicationId=${params?.applicationId} AND `;
@@ -100,7 +101,7 @@ export class BusinessRoleService {
   async findOne(params: FindOneDataPayloadDto) {
     const res = await this.mainRepository.findOne({
       where: {
-        businessRoleId: params?.businessRoleId,
+        businessApplicationRoleId: params?.businessApplicationRoleId,
         dmlStatus: Not(LID_DELETE_ID),
       },
     });
