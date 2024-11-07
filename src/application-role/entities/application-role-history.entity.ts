@@ -16,8 +16,8 @@ export class ApplicationRoleHistory {
   @PrimaryGeneratedColumn({ name: 'application_role_history_id' })
   applicationRoleHistoryId: number;
 
-  @Column({ name: 'application_role_id', nullable: true })
-  applicationRoleId?: number;
+  @Column({ name: 'application_role_id' })
+  applicationRoleId: number;
 
   @Column({ name: 'title' })
   title: string;
