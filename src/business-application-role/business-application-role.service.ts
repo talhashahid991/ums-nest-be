@@ -99,6 +99,55 @@ export class BusinessApplicationRoleService {
     return count ? [query, count] : [];
   }
 
+  async findAllApplicationRoles(params: { businessRoleId: number }) {
+    let sql = '';
+    // Construct SQL query based on provided filter parameters.
+    if (isNumber(params?.businessRoleId)) {
+      sql += `r.businessRoleId=${params?.businessRoleId} AND `;
+    }
+
+    sql += `r.dmlStatus != ${LID_DELETE_ID} ORDER BY 1 DESC`;
+
+    // Count the total number of records based on the constructed SQL query.
+    const count = await this.mainRepository
+      .createQueryBuilder('r')
+      .where(sql)
+      .getCount();
+    // Apply pagination if provided and return the filtered and paginated records.
+    // if (
+    //   !isEmpty(pagination) &&
+    //   pagination?.pageNo >= 0 &&
+    //   pagination?.itemsPerPage > 0
+    // ) {
+    //   sql += ` OFFSET ${
+    //     pagination?.pageNo * pagination?.itemsPerPage
+    //   } ROWS FETCH NEXT ${pagination?.itemsPerPage} ROWS ONLY`;
+    // }
+
+    const query = count
+      ? await this.mainRepository
+          .createQueryBuilder('r')
+          .where(sql)
+          .select('r.applicationRoleId')
+          .leftJoinAndSelect('r.applicationRoleId', 'applicationRoleId')
+          .getMany()
+      : [];
+    return count ? [query, count] : [];
+
+    // const res = await this.mainRepository.find({
+    //   where: {
+    //     businessRoleId: params.businessRoleId,
+    //     dmlStatus: Not(LID_DELETE_ID),
+    //   },
+    //   select: {
+    //     applicationRoleId: true,
+    //   },
+    //   relations: {
+    //     applicationRoleId: true,
+    //   },
+    // });
+  }
+
   async findOne(params: FindOneDataPayloadDto) {
     const res = await this.mainRepository.findOne({
       where: {

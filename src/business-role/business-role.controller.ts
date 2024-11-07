@@ -8,6 +8,7 @@ import { isEmpty } from 'lodash';
 import * as dayjs from 'dayjs';
 import { RestResponse } from 'src/utils/restResponse';
 import { FindAllDto } from './dto/find-all.dto';
+import { FindAllLinkedUnlinkedDto } from './dto/find-all-linked-unlinked.dto';
 
 @Controller('business-role')
 export class BusinessRoleController {
@@ -50,6 +51,33 @@ export class BusinessRoleController {
           return this.mainService.findAll(
             standardParams,
             findAllDto?.pagination,
+          );
+        }),
+      );
+      if (!isEmpty(res) && !isEmpty(res[0])) {
+        return RestResponse.success(res, API_SUCCESS_MESSAGE);
+      } else {
+        return RestResponse.notFound(res);
+      }
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  @UseGuards(JwtAuthGuard)
+  // // @UseGuards(RoleGuard(Role.FullLovCategoryAccess, Role.FindAllLovCategory))
+  @Post('findAllLinkedUnlinked')
+  async findAllLinkedUnlinked(
+    @Request() req: any,
+    @Body() findAllLinkedUnlinkedDto: FindAllLinkedUnlinkedDto,
+  ) {
+    try {
+      const res = await Promise.all(
+        findAllLinkedUnlinkedDto?.data?.map((findPayload) => {
+          const standardParams = addStandardParameters(req.user, findPayload);
+          return this.mainService.findAllLinkedUnlinked(
+            standardParams,
+            findAllLinkedUnlinkedDto?.pagination,
           );
         }),
       );

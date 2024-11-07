@@ -14,5 +14,6 @@ import { BusinessApplicationRoleHistory } from './entities/business-application-
   ],
   controllers: [BusinessApplicationRoleController],
   providers: [BusinessApplicationRoleService],
+  exports: [BusinessApplicationRoleService],
 })
-export class BusinessRoleModule {}
+export class BusinessApplicationRoleModule {}

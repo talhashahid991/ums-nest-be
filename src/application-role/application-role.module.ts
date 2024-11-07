@@ -11,5 +11,6 @@ import { ApplicationRoleHistory } from './entities/application-role-history.enti
   ],
   controllers: [ApplicationRoleController],
   providers: [ApplicationRoleService],
+  exports: [ApplicationRoleService],
 })
 export class ApplicationRoleModule {}

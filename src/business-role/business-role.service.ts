@@ -14,6 +14,9 @@ import { FindAllDataPayloadDto } from './dto/find-all.dto';
 import { paginationDto } from 'src/utils/commonDtos.dto';
 import { isEmpty, isNumber } from 'lodash';
 import { FindOneDataPayloadDto } from './dto/find-one.dto';
+import { FindAllLinkedUnlinkedDataPayloadDto } from './dto/find-all-linked-unlinked.dto';
+import { ApplicationRoleService } from 'src/application-role/application-role.service';
+import { BusinessApplicationRoleService } from 'src/business-application-role/business-application-role.service';
 
 @Injectable()
 export class BusinessRoleService {
@@ -22,6 +25,8 @@ export class BusinessRoleService {
     private readonly mainRepository: Repository<BusinessRole>,
     @InjectRepository(BusinessRoleHistory)
     private readonly historyRepositry: Repository<BusinessRoleHistory>,
+    private applicationRoleService: ApplicationRoleService,
+    private businessApplicationRoleService: BusinessApplicationRoleService,
   ) {}
 
   async create(params: CreateDataPayloadDto) {
@@ -95,6 +100,78 @@ export class BusinessRoleService {
           .getMany()
       : [];
     return count ? [query, count] : [];
+  }
+
+  async findAllLinkedUnlinked(
+    params: FindAllLinkedUnlinkedDataPayloadDto,
+    pagination: paginationDto,
+  ) {
+    // find all applicationRoles from ApplicationRoles for given applicationId
+    const allApplicationRoles = await this.applicationRoleService.findAll(
+      { applicationId: params?.applicationId },
+      {},
+    );
+    // find linked applicationRoles from BusinessApplicationRoles for given businessRoleId
+    const linkedApplicationRoles =
+      await this.businessApplicationRoleService.findAllApplicationRoles({
+        businessRoleId: params.businessRoleId,
+      });
+    let unlinkedApplicationRoles = [];
+    if (linkedApplicationRoles.length) {
+      // find unlinked applicationRoles by subtracting linkedApplicationRoles from allApplicationRoles
+      unlinkedApplicationRoles = allApplicationRoles.filter(
+        (applicationRole) =>
+          !linkedApplicationRoles.includes(applicationRole as any),
+      );
+    } else {
+      unlinkedApplicationRoles = allApplicationRoles;
+    }
+    // filter the unlinked applicationRoles
+    // let sql = '';
+    // Construct SQL query based on provided filter parameters.
+    // if (isNumber(params?.businessRoleId)) {
+    //   sql += `r.businessRoleId=${params?.businessRoleId} AND `;
+    // }
+    // if (!isEmpty(params?.title)) {
+    //   sql += `r.title ilike '%${params?.title}%' AND `;
+    // }
+    // if (!isEmpty(params?.description)) {
+    //   sql += `r.description ilike '%${params?.description}%' AND `;
+    // }
+    // if (!isEmpty(params?.applicationId)) {
+    //   sql += `r.applicationId=${params?.applicationId} AND `;
+    // }
+    // if (!isEmpty(params?.lovStatusId)) {
+    //   sql += `r.lovStatusId=${params?.lovStatusId} AND `;
+    // }
+
+    // sql += `r.dmlStatus != ${LID_DELETE_ID} ORDER BY 1 DESC`;
+
+    // Count the total number of records based on the constructed SQL query.
+    // const count = await this.mainRepository
+    //   .createQueryBuilder('r')
+    //   .where(sql)
+    //   .getCount();
+    // Apply pagination if provided and return the filtered and paginated records.
+    // if (
+    //   !isEmpty(pagination) &&
+    //   pagination?.pageNo >= 0 &&
+    //   pagination?.itemsPerPage > 0
+    // ) {
+    //   sql += ` OFFSET ${
+    //     pagination?.pageNo * pagination?.itemsPerPage
+    //   } ROWS FETCH NEXT ${pagination?.itemsPerPage} ROWS ONLY`;
+    // }
+
+    // const query = count
+    //   ? await this.mainRepository
+    //       .createQueryBuilder('r')
+    //       .where(sql)
+    //       .leftJoinAndSelect('r.lovStatusId', 'lovStatusId')
+    //       .leftJoinAndSelect('r.applicationId', 'applicationId')
+    //       .getMany()
+    //   : [];
+    return [[linkedApplicationRoles, unlinkedApplicationRoles[0]]];
   }
 
   async findOne(params: FindOneDataPayloadDto) {
