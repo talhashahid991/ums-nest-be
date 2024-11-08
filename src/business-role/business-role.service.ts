@@ -17,6 +17,7 @@ import { FindOneDataPayloadDto } from './dto/find-one.dto';
 import { FindAllLinkedUnlinkedDataPayloadDto } from './dto/find-all-linked-unlinked.dto';
 import { ApplicationRoleService } from 'src/application-role/application-role.service';
 import { BusinessApplicationRoleService } from 'src/business-application-role/business-application-role.service';
+import { application } from 'express';
 
 @Injectable()
 export class BusinessRoleService {
@@ -107,22 +108,41 @@ export class BusinessRoleService {
     pagination: paginationDto,
   ) {
     // find all applicationRoles from ApplicationRoles for given applicationId
-    const allApplicationRoles = await this.applicationRoleService.findAll(
+    let allApplicationRoles: any = await this.applicationRoleService.findAll(
       { applicationId: params?.applicationId },
       {},
     );
+    allApplicationRoles = allApplicationRoles[0];
     // find linked applicationRoles from BusinessApplicationRoles for given businessRoleId
-    const linkedApplicationRoles =
+    let linkedApplicationRolesObjects: any =
       await this.businessApplicationRoleService.findAllApplicationRoles({
         businessRoleId: params.businessRoleId,
       });
     let unlinkedApplicationRoles = [];
-    if (linkedApplicationRoles.length) {
+    let linkedApplicationRoles = [];
+    if (linkedApplicationRolesObjects.length) {
+      linkedApplicationRolesObjects = linkedApplicationRolesObjects[0];
       // find unlinked applicationRoles by subtracting linkedApplicationRoles from allApplicationRoles
-      unlinkedApplicationRoles = allApplicationRoles.filter(
-        (applicationRole) =>
-          !linkedApplicationRoles.includes(applicationRole as any),
-      );
+      for (let applicationRole of allApplicationRoles) {
+        let isLinked: boolean = false;
+        for (let role of linkedApplicationRolesObjects) {
+          if (
+            applicationRole.applicationRoleId ===
+            role.applicationRoleId.applicationRoleId
+          ) {
+            isLinked = true;
+          }
+        }
+        if (isLinked) {
+          linkedApplicationRoles.push(applicationRole);
+        } else {
+          unlinkedApplicationRoles.push(applicationRole);
+        }
+      }
+      // unlinkedApplicationRoles = allApplicationRoles.filter(
+      //   (applicationRole) =>
+      //     !linkedApplicationRolesObjects.includes(applicationRole as any),
+      // );
     } else {
       unlinkedApplicationRoles = allApplicationRoles;
     }
@@ -171,7 +191,7 @@ export class BusinessRoleService {
     //       .leftJoinAndSelect('r.applicationId', 'applicationId')
     //       .getMany()
     //   : [];
-    return [[linkedApplicationRoles, unlinkedApplicationRoles[0]]];
+    return [[linkedApplicationRoles, unlinkedApplicationRoles]];
   }
 
   async findOne(params: FindOneDataPayloadDto) {

@@ -129,6 +129,8 @@ export class BusinessApplicationRoleService {
           .where(sql)
           .select('r.applicationRoleId')
           .leftJoinAndSelect('r.applicationRoleId', 'applicationRoleId')
+          .leftJoinAndSelect('applicationRoleId.applicationId', 'applicationId')
+          .leftJoinAndSelect('applicationRoleId.lovStatusId', 'lovStatusId')
           .getMany()
       : [];
     return count ? [query, count] : [];
