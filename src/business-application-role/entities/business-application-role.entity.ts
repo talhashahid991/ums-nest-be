@@ -39,13 +39,13 @@ export class BusinessApplicationRole {
   })
   applicationId: number;
 
-  @ManyToOne(() => ListOfValues, (Lov) => Lov.listOfValuesId)
-  @JoinColumn({ name: 'lov_status_id' })
-  @Column({
-    name: 'lov_status_id',
-    default: LID_ACTIVE_ID,
-  })
-  lovStatusId: number;
+  // @ManyToOne(() => ListOfValues, (Lov) => Lov.listOfValuesId)
+  // @JoinColumn({ name: 'lov_status_id' })
+  // @Column({
+  //   name: 'lov_status_id',
+  //   default: LID_ACTIVE_ID,
+  // })
+  // lovStatusId: number;
 
   // dml
 

@@ -66,9 +66,9 @@ export class BusinessApplicationRoleService {
     if (!isEmpty(params?.applicationId)) {
       sql += `r.applicationId=${params?.applicationId} AND `;
     }
-    if (!isEmpty(params?.lovStatusId)) {
-      sql += `r.lovStatusId=${params?.lovStatusId} AND `;
-    }
+    // if (!isEmpty(params?.lovStatusId)) {
+    //   sql += `r.lovStatusId=${params?.lovStatusId} AND `;
+    // }
 
     sql += `r.dmlStatus != ${LID_DELETE_ID} ORDER BY 1 DESC`;
 
@@ -92,7 +92,6 @@ export class BusinessApplicationRoleService {
       ? await this.mainRepository
           .createQueryBuilder('r')
           .where(sql)
-          .leftJoinAndSelect('r.lovStatusId', 'lovStatusId')
           .leftJoinAndSelect('r.applicationId', 'applicationId')
           .getMany()
       : [];

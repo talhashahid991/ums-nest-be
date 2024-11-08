@@ -21,9 +21,9 @@ export class CreateDataPayloadDto {
   @IsNumber()
   applicationId: number;
 
-  @IsNotEmpty()
-  @IsNumber()
-  lovStatusId: number;
+  // @IsNotEmpty()
+  // @IsNumber()
+  // lovStatusId: number;
 }
 
 export class CreateDto {

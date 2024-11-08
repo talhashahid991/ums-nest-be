@@ -25,9 +25,9 @@ export class UpdateDataPayloadDto {
   @IsNumber()
   applicationId?: number;
 
-  @IsNotEmpty()
-  @IsNumber()
-  lovStatusId?: number;
+  // @IsNotEmpty()
+  // @IsNumber()
+  // lovStatusId?: number;
 }
 
 export class UpdateDto {
