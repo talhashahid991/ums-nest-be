@@ -14,6 +14,7 @@ import { FindAllDataPayloadDto } from './dto/find-all.dto';
 import { paginationDto } from 'src/utils/commonDtos.dto';
 import { isEmpty, isNumber } from 'lodash';
 import { FindOneDataPayloadDto } from './dto/find-one.dto';
+import { FindAllLinkedUnlinkedDataPayloadDto } from './dto/find-all-linked-unlinked.dto';
 
 @Injectable()
 export class ApplicationRoleService {
@@ -106,6 +107,27 @@ export class ApplicationRoleService {
     });
 
     return res;
+  }
+
+  async findAllLinkedUnlinked(params: FindAllLinkedUnlinkedDataPayloadDto) {
+    const allLinkedApplicationRoles = await this.mainRepository.query(
+      `select ar.application_role_id, ar.title, bar.application_role_id, bar.business_role_id 
+      from application_role as ar 
+      inner join business_application_role as bar on ar.application_role_id=bar.application_role_id 
+      AND 
+      bar.business_role_id=1`,
+    );
+
+    const allUnLinkedApplicationRoles = await this.mainRepository.query(
+      `select ar.application_role_id, ar.title, bar.application_role_id as applicationRoleId, bar.business_role_id 
+      from application_role as ar 
+      left join business_application_role as bar on ar.application_role_id=bar.application_role_id 
+      AND 
+      bar.business_role_id=1 
+      where bar.application_role_id is Null`,
+    );
+
+    return [[allLinkedApplicationRoles, allUnLinkedApplicationRoles]];
   }
 
   // async update(params: UpdateDataPayloadDto) {
