@@ -139,58 +139,9 @@ export class BusinessRoleService {
           unlinkedApplicationRoles.push(applicationRole);
         }
       }
-      // unlinkedApplicationRoles = allApplicationRoles.filter(
-      //   (applicationRole) =>
-      //     !linkedApplicationRolesObjects.includes(applicationRole as any),
-      // );
     } else {
       unlinkedApplicationRoles = allApplicationRoles;
     }
-    // filter the unlinked applicationRoles
-    // let sql = '';
-    // Construct SQL query based on provided filter parameters.
-    // if (isNumber(params?.businessRoleId)) {
-    //   sql += `r.businessRoleId=${params?.businessRoleId} AND `;
-    // }
-    // if (!isEmpty(params?.title)) {
-    //   sql += `r.title ilike '%${params?.title}%' AND `;
-    // }
-    // if (!isEmpty(params?.description)) {
-    //   sql += `r.description ilike '%${params?.description}%' AND `;
-    // }
-    // if (!isEmpty(params?.applicationId)) {
-    //   sql += `r.applicationId=${params?.applicationId} AND `;
-    // }
-    // if (!isEmpty(params?.lovStatusId)) {
-    //   sql += `r.lovStatusId=${params?.lovStatusId} AND `;
-    // }
-
-    // sql += `r.dmlStatus != ${LID_DELETE_ID} ORDER BY 1 DESC`;
-
-    // Count the total number of records based on the constructed SQL query.
-    // const count = await this.mainRepository
-    //   .createQueryBuilder('r')
-    //   .where(sql)
-    //   .getCount();
-    // Apply pagination if provided and return the filtered and paginated records.
-    // if (
-    //   !isEmpty(pagination) &&
-    //   pagination?.pageNo >= 0 &&
-    //   pagination?.itemsPerPage > 0
-    // ) {
-    //   sql += ` OFFSET ${
-    //     pagination?.pageNo * pagination?.itemsPerPage
-    //   } ROWS FETCH NEXT ${pagination?.itemsPerPage} ROWS ONLY`;
-    // }
-
-    // const query = count
-    //   ? await this.mainRepository
-    //       .createQueryBuilder('r')
-    //       .where(sql)
-    //       .leftJoinAndSelect('r.lovStatusId', 'lovStatusId')
-    //       .leftJoinAndSelect('r.applicationId', 'applicationId')
-    //       .getMany()
-    //   : [];
     return [[linkedApplicationRoles, unlinkedApplicationRoles]];
   }
 
