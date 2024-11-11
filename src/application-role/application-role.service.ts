@@ -111,7 +111,7 @@ export class ApplicationRoleService {
 
   async findAllLinkedUnlinked(params: FindAllLinkedUnlinkedDataPayloadDto) {
     const allLinkedApplicationRoles = await this.mainRepository.query(
-      `select ar.application_role_id, ar.title, bar.application_role_id, bar.business_role_id 
+      `select ar.application_role_id, ar.title, bar.business_application_role_id, bar.application_role_id, bar.business_role_id 
       from application_role as ar 
       inner join business_application_role as bar on ar.application_role_id=bar.application_role_id 
       AND 

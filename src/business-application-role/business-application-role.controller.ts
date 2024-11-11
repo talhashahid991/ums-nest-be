@@ -104,7 +104,7 @@ export class BusinessApplicationRoleController {
           return this.mainService.delete({
             ...standardParams,
             dmlStatus: LID_DELETE_ID,
-            dmlTimestamps: dayjs().format(),
+            dmlTimestamp: dayjs().format(),
           });
         }),
       );
