@@ -14,6 +14,7 @@ import { FindAllDataPayloadDto } from './dto/find-all.dto';
 import { paginationDto } from 'src/utils/commonDtos.dto';
 import { isEmpty, isNumber } from 'lodash';
 import { FindOneDataPayloadDto } from './dto/find-one.dto';
+import { FindAllLinkedUnlinkedDataPayloadDto } from './dto/find-all-linked-unlinked.dto';
 
 @Injectable()
 export class ApplicationRoleService {
@@ -106,6 +107,48 @@ export class ApplicationRoleService {
     });
 
     return res;
+  }
+
+  async findAllLinkedUnlinked(
+    params: FindAllLinkedUnlinkedDataPayloadDto,
+    pagination: paginationDto,
+  ) {
+    // find all applicationRoles from ApplicationRoles for given applicationId
+    let allApplicationRoles: any = await this.mainRepository.query(
+      ` SELECT ar.* FROM 
+      ApplicationRoles ar 
+      WHERE ar.applicationId = ${params?.applicationId} `);
+    allApplicationRoles = allApplicationRoles[0];
+    // find linked applicationRoles from BusinessApplicationRoles for given businessRoleId
+    let linkedApplicationRolesObjects: any =
+      await this.mainRepository.createQueryBuilder('ar')
+      .where(`ar.applicationId = ${params?.applicationId} AND bar.businessRoleId = ${params?.businessRoleId}`)
+      .leftJoinAndSelect('business_application_role', 'bar', 'ar.applicationRoleId = bar.applicationRoleId');
+    let unlinkedApplicationRoles = [];
+    let linkedApplicationRoles = [];
+    if (linkedApplicationRolesObjects.length) {
+      linkedApplicationRolesObjects = linkedApplicationRolesObjects[0];
+      // find unlinked applicationRoles by subtracting linkedApplicationRoles from allApplicationRoles
+      for (let applicationRole of allApplicationRoles) {
+        let isLinked: boolean = false;
+        for (let role of linkedApplicationRolesObjects) {
+          if (
+            applicationRole.applicationRoleId ===
+            role.applicationRoleId.applicationRoleId
+          ) {
+            isLinked = true;
+          }
+        }
+        if (isLinked) {
+          linkedApplicationRoles.push(applicationRole);
+        } else {
+          unlinkedApplicationRoles.push(applicationRole);
+        }
+      }
+    } else {
+      unlinkedApplicationRoles = allApplicationRoles;
+    }
+    return [[linkedApplicationRoles, unlinkedApplicationRoles]];
   }
 
   // async update(params: UpdateDataPayloadDto) {
