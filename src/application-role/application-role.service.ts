@@ -111,19 +111,19 @@ export class ApplicationRoleService {
 
   async findAllLinkedUnlinked(params: FindAllLinkedUnlinkedDataPayloadDto) {
     const allLinkedApplicationRoles = await this.mainRepository.query(
-      `select ar.application_role_id, ar.title, bar.application_role_id, bar.business_role_id 
+      `select ar.application_role_id, ar.title, bar.business_application_role_id, bar.application_role_id, bar.business_role_id, bar.dml_status 
       from application_role as ar 
       inner join business_application_role as bar on ar.application_role_id=bar.application_role_id 
       AND 
-      bar.business_role_id=${params.businessRoleId}`,
+      bar.business_role_id=${params.businessRoleId} AND bar.dml_status!=${LID_DELETE_ID}`,
     );
 
     const allUnLinkedApplicationRoles = await this.mainRepository.query(
-      `select ar.application_role_id, ar.title, bar.application_role_id as applicationRoleId, bar.business_role_id 
+      `select ar.application_role_id, ar.title, bar.application_role_id as applicationRoleId, bar.business_role_id, bar.dml_status 
       from application_role as ar 
       left join business_application_role as bar on ar.application_role_id=bar.application_role_id 
       AND 
-      bar.business_role_id=${params.businessRoleId} 
+      bar.business_role_id=${params.businessRoleId} AND bar.dml_status!=${LID_DELETE_ID}
       where bar.application_role_id is Null`,
     );
 

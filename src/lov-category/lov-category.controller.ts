@@ -81,7 +81,7 @@ export class LovCategoryController {
           return this.mainService.update({
             ...standardParams,
             dmlStatus: LID_UPDATE_ID,
-            dmlTimestamps: dayjs().format(),
+            dmlTimestamp: dayjs().format(),
           });
         }),
       );
@@ -106,7 +106,7 @@ export class LovCategoryController {
           return this.mainService.delete({
             ...standardParams,
             dmlStatus: LID_DELETE_ID,
-            dmlTimestamps: dayjs().format(),
+            dmlTimestamp: dayjs().format(),
           });
         }),
       );
