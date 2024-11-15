@@ -7,13 +7,15 @@ import {
   PrimaryGeneratedColumn,
   JoinColumn,
   ManyToOne,
-  OneToOne,
 } from 'typeorm';
 
-@Entity({ name: 'organization' })
-export class Organization {
-  @PrimaryGeneratedColumn({ name: 'organization_id' })
-  organizationId: number;
+@Entity({ name: 'organization_history' })
+export class OrganizationHistory {
+  @PrimaryGeneratedColumn({ name: 'organization_history_id' })
+  organizationHistoryId: number;
+
+  @Column({ name: 'organization_id' })
+  organizationRoleId: number;
 
   @Column({ name: 'title' })
   title: string;
@@ -21,7 +23,7 @@ export class Organization {
   @Column({ name: 'description', nullable: true })
   description: string;
 
-  @OneToOne(() => User, (x) => x.userId)
+  @ManyToOne(() => User, (x) => x.userId)
   @JoinColumn({ name: 'owner_id' })
   @Column({
     name: 'owner_id',
