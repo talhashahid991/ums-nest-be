@@ -30,6 +30,7 @@ export class OrganizationController {
           const standardParams = addStandardParameters(req.user, createPayload);
           return this.mainService.create({
             ...standardParams,
+            ownerId: standardParams.dmlUserId,
             dmlStatus: LID_CREATED_ID,
             dmlTimestamp: dayjs().format(),
           });
