@@ -15,7 +15,7 @@ export class OrganizationHistory {
   organizationHistoryId: number;
 
   @Column({ name: 'organization_id' })
-  organizationRoleId: number;
+  organizationId: number;
 
   @Column({ name: 'title' })
   title: string;
