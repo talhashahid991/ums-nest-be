@@ -25,6 +25,10 @@ export class FindAllDataPayloadDto {
   @IsOptional()
   @IsNumber()
   lovStatusId?: number;
+
+  @IsOptional()
+  @IsNumber()
+  organizationId?: number;
 }
 
 export class FindAllDto {
