@@ -12,7 +12,7 @@ import { paginationDto } from 'src/utils/commonDtos.dto';
 export class FindAllDataPayloadDto {
   @IsOptional()
   @IsNumber()
-  applicationId?: number;
+  applicationRouteId?: number;
 
   @IsOptional()
   @IsString()

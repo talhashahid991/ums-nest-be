@@ -19,7 +19,7 @@ export class CreateDataPayloadDto {
 
   @IsNotEmpty()
   @IsNumber()
-  organizationId: number;
+  url: number;
 
   @IsNotEmpty()
   @IsNumber()
