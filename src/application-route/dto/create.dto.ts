@@ -18,8 +18,8 @@ export class CreateDataPayloadDto {
   description?: string;
 
   @IsNotEmpty()
-  @IsNumber()
-  url: number;
+  @IsString()
+  url: string;
 
   @IsNotEmpty()
   @IsNumber()
