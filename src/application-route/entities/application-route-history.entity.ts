@@ -1,5 +1,4 @@
 import { ListOfValues } from 'src/list-of-values/entities/list-of-values.entity';
-import { Organization } from 'src/organization/entities/organization.entity';
 import { User } from 'src/user/entities/user.entity';
 import { LID_ACTIVE_ID, LID_CREATED_ID } from 'src/utils/constants';
 import {
@@ -10,9 +9,12 @@ import {
   ManyToOne,
 } from 'typeorm';
 
-@Entity({ name: 'application_route' })
-export class ApplicationRoute {
-  @PrimaryGeneratedColumn({ name: 'application_route_id' })
+@Entity({ name: 'application_route_history' })
+export class ApplicationRouteHistory {
+  @PrimaryGeneratedColumn({ name: 'application_route_history_id' })
+  applicationRouteHistoryId: number;
+
+  @Column({ name: 'application_route_id' })
   applicationRouteId: number;
 
   @Column({ name: 'title' })
