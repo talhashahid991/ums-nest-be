@@ -91,6 +91,7 @@ export class OrganizationService {
           .createQueryBuilder('r')
           .where(sql)
           .leftJoinAndSelect('r.lovStatusId', 'lovStatusId')
+          .leftJoinAndSelect('r.ownerId', 'ownerId')
           .getMany()
       : [];
     return count ? [query, count] : [];
