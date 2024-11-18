@@ -23,12 +23,16 @@ export class FindAllDataPayloadDto {
   description?: string;
 
   @IsOptional()
+  @IsString()
+  url?: string;
+
+  @IsOptional()
   @IsNumber()
   lovStatusId?: number;
 
   @IsOptional()
   @IsNumber()
-  organizationId?: number;
+  applicationId?: number;
 }
 
 export class FindAllDto {

@@ -23,6 +23,10 @@ export class CreateDataPayloadDto {
 
   @IsNotEmpty()
   @IsNumber()
+  applicationId: number;
+
+  @IsNotEmpty()
+  @IsNumber()
   lovStatusId: number;
 }
 
