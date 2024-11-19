@@ -1,5 +1,6 @@
 import { ListOfValues } from 'src/list-of-values/entities/list-of-values.entity';
 import { LovCategory } from 'src/lov-category/entities/lov-category.entity';
+import { Organization } from 'src/organization/entities/organization.entity';
 import { User } from 'src/user/entities/user.entity';
 import { LID_ACTIVE_ID, LID_CREATED_ID } from 'src/utils/constants';
 import {
@@ -20,6 +21,14 @@ export class Application {
 
   @Column({ name: 'description', nullable: true })
   description: string;
+
+  @ManyToOne(() => Organization, (x) => x.organizationId)
+  @JoinColumn({ name: 'organization_id' })
+  @Column({
+    name: 'organization_id',
+    nullable: true,
+  })
+  organizationId: number;
 
   @ManyToOne(() => ListOfValues, (Lov) => Lov.listOfValuesId)
   @JoinColumn({ name: 'lov_status_id' })

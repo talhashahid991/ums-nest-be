@@ -32,6 +32,7 @@ export class OrganizationService {
       where: [
         {
           title: params.title,
+          ownerId: params.ownerId,
           dmlStatus: Not(LID_DELETE_ID),
         },
       ],
@@ -86,7 +87,11 @@ export class OrganizationService {
     }
 
     const query = count
-      ? await this.mainRepository.createQueryBuilder('r').where(sql).getMany()
+      ? await this.mainRepository
+          .createQueryBuilder('r')
+          .where(sql)
+          .leftJoinAndSelect('r.lovStatusId', 'lovStatusId')
+          .getMany()
       : [];
     return count ? [query, count] : [];
   }
@@ -108,6 +113,7 @@ export class OrganizationService {
       where: [
         {
           title: params.title,
+          ownerId: params.ownerId,
           dmlStatus: Not(LID_DELETE_ID),
           organizationId: Not(params.organizationId),
         },
@@ -161,23 +167,4 @@ export class OrganizationService {
       return RestResponse.error(params, TRY_AGAIN_LATER);
     }
   }
-  // create(createOrganizationDto: CreateOrganizationDto) {
-  //   return 'This action adds a new organization';
-  // }
-
-  // findAll() {
-  //   return `This action returns all organization`;
-  // }
-
-  // findOne(id: number) {
-  //   return `This action returns a #${id} organization`;
-  // }
-
-  // update(id: number, updateOrganizationDto: UpdateOrganizationDto) {
-  //   return `This action updates a #${id} organization`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} organization`;
-  // }
 }

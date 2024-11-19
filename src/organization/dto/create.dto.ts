@@ -17,7 +17,7 @@ export class CreateDataPayloadDto {
   @IsString()
   description?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsNumber()
   ownerId: number;
 
