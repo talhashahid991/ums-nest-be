@@ -18,6 +18,7 @@ import { FindAllLinkedUnlinkedDataPayloadDto } from './dto/find-all-linked-unlin
 import { ApplicationRoleService } from 'src/application-role/application-role.service';
 import { BusinessApplicationRoleService } from 'src/business-application-role/business-application-role.service';
 import { application } from 'express';
+import { UpdateDataPayloadDto } from './dto/update.dto';
 
 @Injectable()
 export class BusinessRoleService {
@@ -156,43 +157,43 @@ export class BusinessRoleService {
     return res;
   }
 
-  // async update(params: UpdateDataPayloadDto) {
-  //   // check if record exists
-  //   const ifRecordExists = await this.mainRepository.findOne({
-  //     where: [
-  //       {
-  //         title: params.title,
-  //         dmlStatus: Not(LID_DELETE_ID),
-  //         lovCategoryId: params.lovCategoryId,
-  //         listOfValuesId: Not(params.listOfValuesId),
-  //       },
-  //     ],
-  //   });
+  async update(params: UpdateDataPayloadDto) {
+    // check if record exists
+    const ifRecordExists = await this.mainRepository.findOne({
+      where: [
+        {
+          title: params.title,
+          dmlStatus: Not(LID_DELETE_ID),
+          applicationId: params.applicationId,
+          businessRoleId: Not(params.businessRoleId),
+        },
+      ],
+    });
 
-  //   if (ifRecordExists) {
-  //     return RestResponse.error(params, RECORD_EXISTS);
-  //   }
+    if (ifRecordExists) {
+      return RestResponse.error(params, RECORD_EXISTS);
+    }
 
-  //   const obj = await this.findOne({
-  //     listOfValuesId: params.listOfValuesId,
-  //   });
+    const obj = await this.findOne({
+      businessRoleId: params.businessRoleId,
+    });
 
-  //   // If the record to update does not exist, throw a NotFoundException.
-  //   if (!obj) {
-  //     return RestResponse.notFound(params);
-  //   }
+    // If the record to update does not exist, throw a NotFoundException.
+    if (!obj) {
+      return RestResponse.notFound(params);
+    }
 
-  //   const res = await this.mainRepository.save({
-  //     ...params,
-  //   });
-  //   await this.historyRepositry.save({ ...res });
-  //   if (!res) {
-  //     return [res];
-  //   } else {
-  //     // If creation fails, throw a BadRequestException.
-  //     return RestResponse.error(params, TRY_AGAIN_LATER);
-  //   }
-  // }
+    const res = await this.mainRepository.save({
+      ...params,
+    });
+    await this.historyRepositry.save({ ...res });
+    if (!res) {
+      return [res];
+    } else {
+      // If creation fails, throw a BadRequestException.
+      return RestResponse.error(params, TRY_AGAIN_LATER);
+    }
+  }
 
   // async delete(params: DeleteDataPayloadDto) {
   //   const obj = await this.findOne({

@@ -3,12 +3,17 @@ import { BusinessRoleService } from './business-role.service';
 import JwtAuthGuard from 'src/auth/jwt-auth.guard';
 import { CreateDto } from './dto/create.dto';
 import { addStandardParameters } from 'src/utils/commonFunctions';
-import { API_SUCCESS_MESSAGE, LID_CREATED_ID } from 'src/utils/constants';
+import {
+  API_SUCCESS_MESSAGE,
+  LID_CREATED_ID,
+  LID_UPDATE_ID,
+} from 'src/utils/constants';
 import { isEmpty } from 'lodash';
 import * as dayjs from 'dayjs';
 import { RestResponse } from 'src/utils/restResponse';
 import { FindAllDto } from './dto/find-all.dto';
 import { FindAllLinkedUnlinkedDto } from './dto/find-all-linked-unlinked.dto';
+import { UpdateDto } from './dto/update.dto';
 
 @Controller('business-role')
 export class BusinessRoleController {
@@ -64,30 +69,30 @@ export class BusinessRoleController {
     }
   }
 
-  // @UseGuards(JwtAuthGuard)
-  // // @UseGuards(RoleGuard(Role.FullLovCategoryAccess, Role.UpdateLovCategory))
-  // @Post('update')
-  // async update(@Request() req: any, @Body() updateDto: UpdateDto) {
-  //   try {
-  //     const res = await Promise.all(
-  //       updateDto?.data?.map((updatePayload) => {
-  //         const standardParams = addStandardParameters(req.user, updatePayload);
-  //         return this.mainService.update({
-  //           ...standardParams,
-  //           dmlStatus: LID_UPDATE_ID,
-  //           dmlTimestamps: dayjs().format(),
-  //         });
-  //       }),
-  //     );
-  //     if (!isEmpty(res)) {
-  //       return RestResponse.success(res, API_SUCCESS_MESSAGE);
-  //     } else {
-  //       return RestResponse.notFound(res);
-  //     }
-  //   } catch (e) {
-  //     throw e;
-  //   }
-  // }
+  @UseGuards(JwtAuthGuard)
+  // @UseGuards(RoleGuard(Role.FullLovCategoryAccess, Role.UpdateLovCategory))
+  @Post('update')
+  async update(@Request() req: any, @Body() updateDto: UpdateDto) {
+    try {
+      const res = await Promise.all(
+        updateDto?.data?.map((updatePayload) => {
+          const standardParams = addStandardParameters(req.user, updatePayload);
+          return this.mainService.update({
+            ...standardParams,
+            dmlStatus: LID_UPDATE_ID,
+            dmlTimestamps: dayjs().format(),
+          });
+        }),
+      );
+      if (!isEmpty(res)) {
+        return RestResponse.success(res, API_SUCCESS_MESSAGE);
+      } else {
+        return RestResponse.notFound(res);
+      }
+    } catch (e) {
+      throw e;
+    }
+  }
 
   // @UseGuards(JwtAuthGuard)
   // // @UseGuards(RoleGuard(Role.FullLovCategoryAccess, Role.DeleteLovCategory))
