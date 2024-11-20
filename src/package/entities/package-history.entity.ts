@@ -11,9 +11,12 @@ import {
   ManyToOne,
 } from 'typeorm';
 
-@Entity({ name: 'package' })
-export class Package {
-  @PrimaryGeneratedColumn({ name: 'package_id' })
+@Entity({ name: 'package_history' })
+export class PackageHistory {
+  @PrimaryGeneratedColumn({ name: 'package_history_id' })
+  packageHistoryId: number;
+
+  @Column({ name: 'package_id' })
   packageId: number;
 
   @Column({ name: 'title' })
