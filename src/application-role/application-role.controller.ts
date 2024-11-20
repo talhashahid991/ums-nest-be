@@ -13,6 +13,7 @@ import { addStandardParameters } from 'src/utils/commonFunctions';
 import {
   API_SUCCESS_MESSAGE,
   LID_CREATED_ID,
+  LID_DELETE_ID,
   LID_UPDATE_ID,
 } from 'src/utils/constants';
 import { isEmpty } from 'lodash';
@@ -21,6 +22,7 @@ import { RestResponse } from 'src/utils/restResponse';
 import { FindAllDto } from './dto/find-all.dto';
 import { FindAllLinkedUnlinkedDto } from './dto/find-all-linked-unlinked.dto';
 import { UpdateDto } from './dto/update.dto';
+import { DeleteDto } from './dto/delete.dto';
 
 @Controller('application-role')
 export class ApplicationRoleController {
@@ -125,28 +127,28 @@ export class ApplicationRoleController {
     }
   }
 
-  // @UseGuards(JwtAuthGuard)
-  // // @UseGuards(RoleGuard(Role.FullLovCategoryAccess, Role.DeleteLovCategory))
-  // @Post('delete')
-  // async remove(@Request() req: any, @Body() deleteDto: DeleteDto) {
-  //   try {
-  //     const res = await Promise.all(
-  //       deleteDto.data.map((findPayload) => {
-  //         const standardParams = addStandardParameters(req.user, findPayload);
-  //         return this.mainService.delete({
-  //           ...standardParams,
-  //           dmlStatus: LID_DELETE_ID,
-  //           dmlTimestamps: dayjs().format(),
-  //         });
-  //       }),
-  //     );
-  //     if (!isEmpty(res)) {
-  //       return RestResponse.success(res, API_SUCCESS_MESSAGE);
-  //     } else {
-  //       return RestResponse.notFound(res);
-  //     }
-  //   } catch (e) {
-  //     throw e;
-  //   }
-  // }
+  @UseGuards(JwtAuthGuard)
+  // @UseGuards(RoleGuard(Role.FullLovCategoryAccess, Role.DeleteLovCategory))
+  @Post('delete')
+  async remove(@Request() req: any, @Body() deleteDto: DeleteDto) {
+    try {
+      const res = await Promise.all(
+        deleteDto.data.map((findPayload) => {
+          const standardParams = addStandardParameters(req.user, findPayload);
+          return this.mainService.delete({
+            ...standardParams,
+            dmlStatus: LID_DELETE_ID,
+            dmlTimestamps: dayjs().format(),
+          });
+        }),
+      );
+      if (!isEmpty(res)) {
+        return RestResponse.success(res, API_SUCCESS_MESSAGE);
+      } else {
+        return RestResponse.notFound(res);
+      }
+    } catch (e) {
+      throw e;
+    }
+  }
 }
