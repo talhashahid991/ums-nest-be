@@ -22,14 +22,6 @@ export class Application {
   @Column({ name: 'description', nullable: true })
   description: string;
 
-  @ManyToOne(() => Organization, (x) => x.organizationId)
-  @JoinColumn({ name: 'organization_id' })
-  @Column({
-    name: 'organization_id',
-    nullable: true,
-  })
-  organizationId: number;
-
   @ManyToOne(() => ListOfValues, (Lov) => Lov.listOfValuesId)
   @JoinColumn({ name: 'lov_status_id' })
   @Column({

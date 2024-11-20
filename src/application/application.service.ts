@@ -31,7 +31,6 @@ export class ApplicationService {
       where: [
         {
           title: params.title,
-          organizationId: params.organizationId,
           dmlStatus: Not(LID_DELETE_ID),
         },
       ],
@@ -65,10 +64,6 @@ export class ApplicationService {
     }
     if (!isEmpty(params?.lovStatusId)) {
       sql += `r.lovStatusId=${params?.lovStatusId} AND `;
-    }
-
-    if (!isEmpty(params?.organizationId)) {
-      sql += `r.organizationId=${params?.organizationId} AND `;
     }
 
     sql += `r.dmlStatus != ${LID_DELETE_ID} ORDER BY 1 DESC`;
