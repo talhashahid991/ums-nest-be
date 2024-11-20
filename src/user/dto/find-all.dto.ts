@@ -55,6 +55,10 @@ export class FindAllDataPayloadDto {
 
   @IsOptional()
   @IsNumber()
+  organizationId?: number;
+
+  @IsOptional()
+  @IsNumber()
   packageId?: number;
 
   @IsOptional()
