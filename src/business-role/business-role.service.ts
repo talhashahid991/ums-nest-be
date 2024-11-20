@@ -18,6 +18,8 @@ import { FindAllLinkedUnlinkedDataPayloadDto } from './dto/find-all-linked-unlin
 import { ApplicationRoleService } from 'src/application-role/application-role.service';
 import { BusinessApplicationRoleService } from 'src/business-application-role/business-application-role.service';
 import { application } from 'express';
+import { UpdateDataPayloadDto } from './dto/update.dto';
+import { DeleteDataPayloadDto } from './dto/delete.dto';
 
 @Injectable()
 export class BusinessRoleService {
@@ -103,48 +105,6 @@ export class BusinessRoleService {
     return count ? [query, count] : [];
   }
 
-  // async findAllLinkedUnlinked(
-  //   params: FindAllLinkedUnlinkedDataPayloadDto,
-  //   pagination: paginationDto,
-  // ) {
-  //   // find all applicationRoles from ApplicationRoles for given applicationId
-  //   let allApplicationRoles: any = await this.applicationRoleService.findAll(
-  //     { applicationId: params?.applicationId },
-  //     {},
-  //   );
-  //   allApplicationRoles = allApplicationRoles[0];
-  //   // find linked applicationRoles from BusinessApplicationRoles for given businessRoleId
-  //   let linkedApplicationRolesObjects: any =
-  //     await this.businessApplicationRoleService.findAllApplicationRoles({
-  //       businessRoleId: params.businessRoleId,
-  //     });
-  //   let unlinkedApplicationRoles = [];
-  //   let linkedApplicationRoles = [];
-  //   if (linkedApplicationRolesObjects.length) {
-  //     linkedApplicationRolesObjects = linkedApplicationRolesObjects[0];
-  //     // find unlinked applicationRoles by subtracting linkedApplicationRoles from allApplicationRoles
-  //     for (let applicationRole of allApplicationRoles) {
-  //       let isLinked: boolean = false;
-  //       for (let role of linkedApplicationRolesObjects) {
-  //         if (
-  //           applicationRole.applicationRoleId ===
-  //           role.applicationRoleId.applicationRoleId
-  //         ) {
-  //           isLinked = true;
-  //         }
-  //       }
-  //       if (isLinked) {
-  //         linkedApplicationRoles.push(applicationRole);
-  //       } else {
-  //         unlinkedApplicationRoles.push(applicationRole);
-  //       }
-  //     }
-  //   } else {
-  //     unlinkedApplicationRoles = allApplicationRoles;
-  //   }
-  //   return [[linkedApplicationRoles, unlinkedApplicationRoles]];
-  // }
-
   async findOne(params: FindOneDataPayloadDto) {
     const res = await this.mainRepository.findOne({
       where: {
@@ -156,64 +116,64 @@ export class BusinessRoleService {
     return res;
   }
 
-  // async update(params: UpdateDataPayloadDto) {
-  //   // check if record exists
-  //   const ifRecordExists = await this.mainRepository.findOne({
-  //     where: [
-  //       {
-  //         title: params.title,
-  //         dmlStatus: Not(LID_DELETE_ID),
-  //         lovCategoryId: params.lovCategoryId,
-  //         listOfValuesId: Not(params.listOfValuesId),
-  //       },
-  //     ],
-  //   });
+  async update(params: UpdateDataPayloadDto) {
+    // check if record exists
+    const ifRecordExists = await this.mainRepository.findOne({
+      where: [
+        {
+          title: params.title,
+          dmlStatus: Not(LID_DELETE_ID),
+          applicationId: params.applicationId,
+          businessRoleId: Not(params.businessRoleId),
+        },
+      ],
+    });
 
-  //   if (ifRecordExists) {
-  //     return RestResponse.error(params, RECORD_EXISTS);
-  //   }
+    if (ifRecordExists) {
+      return RestResponse.error(params, RECORD_EXISTS);
+    }
 
-  //   const obj = await this.findOne({
-  //     listOfValuesId: params.listOfValuesId,
-  //   });
+    const obj = await this.findOne({
+      businessRoleId: params.businessRoleId,
+    });
 
-  //   // If the record to update does not exist, throw a NotFoundException.
-  //   if (!obj) {
-  //     return RestResponse.notFound(params);
-  //   }
+    // If the record to update does not exist, throw a NotFoundException.
+    if (!obj) {
+      return RestResponse.notFound(params);
+    }
 
-  //   const res = await this.mainRepository.save({
-  //     ...params,
-  //   });
-  //   await this.historyRepositry.save({ ...res });
-  //   if (!res) {
-  //     return [res];
-  //   } else {
-  //     // If creation fails, throw a BadRequestException.
-  //     return RestResponse.error(params, TRY_AGAIN_LATER);
-  //   }
-  // }
+    const res = await this.mainRepository.save({
+      ...params,
+    });
+    await this.historyRepositry.save({ ...res });
+    if (!res) {
+      return [res];
+    } else {
+      // If creation fails, throw a BadRequestException.
+      return RestResponse.error(params, TRY_AGAIN_LATER);
+    }
+  }
 
-  // async delete(params: DeleteDataPayloadDto) {
-  //   const obj = await this.findOne({
-  //     listOfValuesId: params.listOfValuesId,
-  //   });
+  async delete(params: DeleteDataPayloadDto) {
+    const obj = await this.findOne({
+      businessRoleId: params.businessRoleId,
+    });
 
-  //   // If the record to update does not exist, throw a NotFoundException.
-  //   if (!obj) {
-  //     return RestResponse.notFound(params);
-  //   }
-  //   obj.dmlStatus = params['dmlStatus'];
-  //   obj.dmlTimestamp = params['dmlTimestamp'];
-  //   const res = await this.mainRepository.save({
-  //     ...obj,
-  //   });
-  //   await this.historyRepositry.save({ ...res });
-  //   if (res) {
-  //     return [res];
-  //   } else {
-  //     // If creation fails, throw a BadRequestException.
-  //     return RestResponse.error(params, TRY_AGAIN_LATER);
-  //   }
-  // }
+    // If the record to update does not exist, throw a NotFoundException.
+    if (!obj) {
+      return RestResponse.notFound(params);
+    }
+    obj.dmlStatus = params['dmlStatus'];
+    obj.dmlTimestamp = params['dmlTimestamp'];
+    const res = await this.mainRepository.save({
+      ...obj,
+    });
+    await this.historyRepositry.save({ ...res });
+    if (res) {
+      return [res];
+    } else {
+      // If creation fails, throw a BadRequestException.
+      return RestResponse.error(params, TRY_AGAIN_LATER);
+    }
+  }
 }

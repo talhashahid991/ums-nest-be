@@ -1,7 +1,6 @@
-import { Controller, Post, Body, Request, UseGuards } from '@nestjs/common';
-import { BusinessRoleService } from './business-role.service';
+import { Controller, Request, Post, Body, UseGuards } from '@nestjs/common';
+import { ApplicationRouteService } from './application-route.service';
 import JwtAuthGuard from 'src/auth/jwt-auth.guard';
-import { CreateDto } from './dto/create.dto';
 import { addStandardParameters } from 'src/utils/commonFunctions';
 import {
   API_SUCCESS_MESSAGE,
@@ -11,15 +10,15 @@ import {
 } from 'src/utils/constants';
 import { isEmpty } from 'lodash';
 import * as dayjs from 'dayjs';
+import { CreateDto } from './dto/create.dto';
 import { RestResponse } from 'src/utils/restResponse';
 import { FindAllDto } from './dto/find-all.dto';
-import { FindAllLinkedUnlinkedDto } from './dto/find-all-linked-unlinked.dto';
 import { UpdateDto } from './dto/update.dto';
 import { DeleteDto } from './dto/delete.dto';
 
-@Controller('business-role')
-export class BusinessRoleController {
-  constructor(private readonly mainService: BusinessRoleService) {}
+@Controller('application-route')
+export class ApplicationRouteController {
+  constructor(private readonly mainService: ApplicationRouteService) {}
 
   @UseGuards(JwtAuthGuard)
   // @UseGuards(RoleGuard(Role.FullLovCategoryAccess, Role.AddLovCategory))

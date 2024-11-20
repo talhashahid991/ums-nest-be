@@ -15,6 +15,8 @@ import { paginationDto } from 'src/utils/commonDtos.dto';
 import { isEmpty, isNumber } from 'lodash';
 import { FindOneDataPayloadDto } from './dto/find-one.dto';
 import { FindAllLinkedUnlinkedDataPayloadDto } from './dto/find-all-linked-unlinked.dto';
+import { UpdateDataPayloadDto } from './dto/update.dto';
+import { DeleteDataPayloadDto } from './dto/delete.dto';
 
 @Injectable()
 export class ApplicationRoleService {
@@ -130,64 +132,64 @@ export class ApplicationRoleService {
     return [[allLinkedApplicationRoles, allUnLinkedApplicationRoles]];
   }
 
-  // async update(params: UpdateDataPayloadDto) {
-  //   // check if record exists
-  //   const ifRecordExists = await this.mainRepository.findOne({
-  //     where: [
-  //       {
-  //         title: params.title,
-  //         dmlStatus: Not(LID_DELETE_ID),
-  //         lovCategoryId: params.lovCategoryId,
-  //         listOfValuesId: Not(params.listOfValuesId),
-  //       },
-  //     ],
-  //   });
+  async update(params: UpdateDataPayloadDto) {
+    // check if record exists
+    const ifRecordExists = await this.mainRepository.findOne({
+      where: [
+        {
+          title: params.title,
+          dmlStatus: Not(LID_DELETE_ID),
+          applicationId: params.applicationId,
+          applicationRoleId: Not(params.applicationRoleId),
+        },
+      ],
+    });
 
-  //   if (ifRecordExists) {
-  //     return RestResponse.error(params, RECORD_EXISTS);
-  //   }
+    if (ifRecordExists) {
+      return RestResponse.error(params, RECORD_EXISTS);
+    }
 
-  //   const obj = await this.findOne({
-  //     listOfValuesId: params.listOfValuesId,
-  //   });
+    const obj = await this.findOne({
+      applicationRoleId: params.applicationRoleId,
+    });
 
-  //   // If the record to update does not exist, throw a NotFoundException.
-  //   if (!obj) {
-  //     return RestResponse.notFound(params);
-  //   }
+    // If the record to update does not exist, throw a NotFoundException.
+    if (!obj) {
+      return RestResponse.notFound(params);
+    }
 
-  //   const res = await this.mainRepository.save({
-  //     ...params,
-  //   });
-  //   await this.historyRepositry.save({ ...res });
-  //   if (!res) {
-  //     return [res];
-  //   } else {
-  //     // If creation fails, throw a BadRequestException.
-  //     return RestResponse.error(params, TRY_AGAIN_LATER);
-  //   }
-  // }
+    const res = await this.mainRepository.save({
+      ...params,
+    });
+    await this.historyRepositry.save({ ...res });
+    if (!res) {
+      return [res];
+    } else {
+      // If creation fails, throw a BadRequestException.
+      return RestResponse.error(params, TRY_AGAIN_LATER);
+    }
+  }
 
-  // async delete(params: DeleteDataPayloadDto) {
-  //   const obj = await this.findOne({
-  //     listOfValuesId: params.listOfValuesId,
-  //   });
+  async delete(params: DeleteDataPayloadDto) {
+    const obj = await this.findOne({
+      applicationRoleId: params.applicationRoleId,
+    });
 
-  //   // If the record to update does not exist, throw a NotFoundException.
-  //   if (!obj) {
-  //     return RestResponse.notFound(params);
-  //   }
-  //   obj.dmlStatus = params['dmlStatus'];
-  //   obj.dmlTimestamp = params['dmlTimestamp'];
-  //   const res = await this.mainRepository.save({
-  //     ...obj,
-  //   });
-  //   await this.historyRepositry.save({ ...res });
-  //   if (res) {
-  //     return [res];
-  //   } else {
-  //     // If creation fails, throw a BadRequestException.
-  //     return RestResponse.error(params, TRY_AGAIN_LATER);
-  //   }
-  // }
+    // If the record to update does not exist, throw a NotFoundException.
+    if (!obj) {
+      return RestResponse.notFound(params);
+    }
+    obj.dmlStatus = params['dmlStatus'];
+    obj.dmlTimestamp = params['dmlTimestamp'];
+    const res = await this.mainRepository.save({
+      ...obj,
+    });
+    await this.historyRepositry.save({ ...res });
+    if (res) {
+      return [res];
+    } else {
+      // If creation fails, throw a BadRequestException.
+      return RestResponse.error(params, TRY_AGAIN_LATER);
+    }
+  }
 }

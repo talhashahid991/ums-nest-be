@@ -8,11 +8,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 
-export class UpdateDataPayloadDto {
-  @IsNotEmpty()
-  @IsNumber()
-  applicationRoleId: number;
-
+export class CreateDataPayloadDto {
   @IsNotEmpty()
   @IsString()
   title: string;
@@ -20,6 +16,10 @@ export class UpdateDataPayloadDto {
   @IsOptional()
   @IsString()
   description?: string;
+
+  @IsNotEmpty()
+  @IsString()
+  url: string;
 
   @IsNotEmpty()
   @IsNumber()
@@ -30,10 +30,10 @@ export class UpdateDataPayloadDto {
   lovStatusId: number;
 }
 
-export class UpdateDto {
+export class CreateDto {
   @IsNotEmpty()
   @ValidateNested({ each: true })
-  @Type(() => UpdateDataPayloadDto)
+  @Type(() => CreateDataPayloadDto)
   @IsArray()
-  data: UpdateDataPayloadDto[];
+  data: CreateDataPayloadDto[];
 }

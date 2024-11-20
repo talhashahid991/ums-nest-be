@@ -11,7 +11,11 @@ import {
 export class UpdateDataPayloadDto {
   @IsNotEmpty()
   @IsNumber()
-  applicationRoleId: number;
+  applicationRouteId: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  applicationId: number;
 
   @IsNotEmpty()
   @IsString()
@@ -22,12 +26,12 @@ export class UpdateDataPayloadDto {
   description?: string;
 
   @IsNotEmpty()
-  @IsNumber()
-  applicationId: number;
+  @IsString()
+  url: string;
 
   @IsNotEmpty()
   @IsNumber()
-  lovStatusId: number;
+  lovStatusId?: number;
 }
 
 export class UpdateDto {

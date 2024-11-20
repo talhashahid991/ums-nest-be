@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Organization } from './entities/organization.entity';
+import { ApplicationRoute } from './entities/application-route.entity';
+import { ApplicationRouteHistory } from './entities/application-route-history.entity';
 import { Not, Repository } from 'typeorm';
-import { OrganizationHistory } from './entities/organization-history.entity';
 import { CreateDataPayloadDto } from './dto/create.dto';
 import {
   LID_DELETE_ID,
@@ -18,12 +18,12 @@ import { UpdateDataPayloadDto } from './dto/update.dto';
 import { DeleteDataPayloadDto } from './dto/delete.dto';
 
 @Injectable()
-export class OrganizationService {
+export class ApplicationRouteService {
   constructor(
-    @InjectRepository(Organization)
-    private readonly mainRepository: Repository<Organization>,
-    @InjectRepository(OrganizationHistory)
-    private readonly historyRepositry: Repository<OrganizationHistory>,
+    @InjectRepository(ApplicationRoute)
+    private readonly mainRepository: Repository<ApplicationRoute>,
+    @InjectRepository(ApplicationRouteHistory)
+    private readonly historyRepositry: Repository<ApplicationRouteHistory>,
   ) {}
 
   async create(params: CreateDataPayloadDto) {
@@ -32,7 +32,8 @@ export class OrganizationService {
       where: [
         {
           title: params.title,
-          ownerId: params.ownerId,
+          applicationId: params.applicationId,
+          url: params.url,
           dmlStatus: Not(LID_DELETE_ID),
         },
       ],
@@ -55,8 +56,8 @@ export class OrganizationService {
   async findAll(params: FindAllDataPayloadDto, pagination: paginationDto) {
     let sql = '';
     // Construct SQL query based on provided filter parameters.
-    if (isNumber(params?.organizationId)) {
-      sql += `r.organizationId=${params?.organizationId} AND `;
+    if (isNumber(params?.applicationRouteId)) {
+      sql += `r.applicationRouteId=${params?.applicationRouteId} AND `;
     }
     if (!isEmpty(params?.title)) {
       sql += `r.title ilike '%${params?.title}%' AND `;
@@ -64,8 +65,14 @@ export class OrganizationService {
     if (!isEmpty(params?.description)) {
       sql += `r.description ilike '%${params?.description}%' AND `;
     }
-    if (isNumber(params?.ownerId)) {
-      sql += `r.ownerId=${params?.ownerId} AND `;
+    if (!isEmpty(params?.url)) {
+      sql += `r.url ilike '%${params?.url}%' AND `;
+    }
+    if (!isEmpty(params?.lovStatusId)) {
+      sql += `r.lovStatusId=${params?.lovStatusId} AND `;
+    }
+    if (!isEmpty(params?.applicationId)) {
+      sql += `r.applicationId=${params?.applicationId} AND `;
     }
 
     sql += `r.dmlStatus != ${LID_DELETE_ID} ORDER BY 1 DESC`;
@@ -91,7 +98,6 @@ export class OrganizationService {
           .createQueryBuilder('r')
           .where(sql)
           .leftJoinAndSelect('r.lovStatusId', 'lovStatusId')
-          .leftJoinAndSelect('r.ownerId', 'ownerId')
           .getMany()
       : [];
     return count ? [query, count] : [];
@@ -100,7 +106,7 @@ export class OrganizationService {
   async findOne(params: FindOneDataPayloadDto) {
     const res = await this.mainRepository.findOne({
       where: {
-        organizationId: params?.organizationId,
+        applicationRouteId: params?.applicationRouteId,
         dmlStatus: Not(LID_DELETE_ID),
       },
     });
@@ -114,9 +120,8 @@ export class OrganizationService {
       where: [
         {
           title: params.title,
-          ownerId: params.ownerId,
           dmlStatus: Not(LID_DELETE_ID),
-          organizationId: Not(params.organizationId),
+          applicationRouteId: Not(params.applicationRouteId),
         },
       ],
     });
@@ -126,7 +131,7 @@ export class OrganizationService {
     }
 
     const obj = await this.findOne({
-      organizationId: params.organizationId,
+      applicationRouteId: params.applicationRouteId,
     });
 
     // If the record to update does not exist, throw a NotFoundException.
@@ -148,7 +153,7 @@ export class OrganizationService {
 
   async delete(params: DeleteDataPayloadDto) {
     const obj = await this.findOne({
-      organizationId: params.organizationId,
+      applicationRouteId: params.applicationRouteId,
     });
 
     // If the record to update does not exist, throw a NotFoundException.

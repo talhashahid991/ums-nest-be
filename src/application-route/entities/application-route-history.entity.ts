@@ -1,6 +1,5 @@
+import { Application } from 'src/application/entities/application.entity';
 import { ListOfValues } from 'src/list-of-values/entities/list-of-values.entity';
-import { LovCategory } from 'src/lov-category/entities/lov-category.entity';
-import { Organization } from 'src/organization/entities/organization.entity';
 import { User } from 'src/user/entities/user.entity';
 import { LID_ACTIVE_ID, LID_CREATED_ID } from 'src/utils/constants';
 import {
@@ -11,16 +10,29 @@ import {
   ManyToOne,
 } from 'typeorm';
 
-@Entity({ name: 'application' })
-export class Application {
-  @PrimaryGeneratedColumn({ name: 'application_id' })
-  applicationId: number;
+@Entity({ name: 'application_route_history' })
+export class ApplicationRouteHistory {
+  @PrimaryGeneratedColumn({ name: 'application_route_history_id' })
+  applicationRouteHistoryId: number;
+
+  @Column({ name: 'application_route_id' })
+  applicationRouteId: number;
 
   @Column({ name: 'title' })
   title: string;
 
   @Column({ name: 'description', nullable: true })
   description: string;
+
+  @Column({ name: 'url' })
+  url: string;
+
+  @ManyToOne(() => Application, (x) => x.applicationId)
+  @JoinColumn({ name: 'application_id' })
+  @Column({
+    name: 'application_id',
+  })
+  applicationId: number;
 
   @ManyToOne(() => ListOfValues, (Lov) => Lov.listOfValuesId)
   @JoinColumn({ name: 'lov_status_id' })

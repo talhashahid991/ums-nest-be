@@ -19,10 +19,6 @@ export class CreateDataPayloadDto {
 
   @IsNotEmpty()
   @IsNumber()
-  organizationId: number;
-
-  @IsNotEmpty()
-  @IsNumber()
   lovStatusId: number;
 }
 
