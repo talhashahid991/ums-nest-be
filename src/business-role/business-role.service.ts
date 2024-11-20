@@ -105,48 +105,6 @@ export class BusinessRoleService {
     return count ? [query, count] : [];
   }
 
-  // async findAllLinkedUnlinked(
-  //   params: FindAllLinkedUnlinkedDataPayloadDto,
-  //   pagination: paginationDto,
-  // ) {
-  //   // find all applicationRoles from ApplicationRoles for given applicationId
-  //   let allApplicationRoles: any = await this.applicationRoleService.findAll(
-  //     { applicationId: params?.applicationId },
-  //     {},
-  //   );
-  //   allApplicationRoles = allApplicationRoles[0];
-  //   // find linked applicationRoles from BusinessApplicationRoles for given businessRoleId
-  //   let linkedApplicationRolesObjects: any =
-  //     await this.businessApplicationRoleService.findAllApplicationRoles({
-  //       businessRoleId: params.businessRoleId,
-  //     });
-  //   let unlinkedApplicationRoles = [];
-  //   let linkedApplicationRoles = [];
-  //   if (linkedApplicationRolesObjects.length) {
-  //     linkedApplicationRolesObjects = linkedApplicationRolesObjects[0];
-  //     // find unlinked applicationRoles by subtracting linkedApplicationRoles from allApplicationRoles
-  //     for (let applicationRole of allApplicationRoles) {
-  //       let isLinked: boolean = false;
-  //       for (let role of linkedApplicationRolesObjects) {
-  //         if (
-  //           applicationRole.applicationRoleId ===
-  //           role.applicationRoleId.applicationRoleId
-  //         ) {
-  //           isLinked = true;
-  //         }
-  //       }
-  //       if (isLinked) {
-  //         linkedApplicationRoles.push(applicationRole);
-  //       } else {
-  //         unlinkedApplicationRoles.push(applicationRole);
-  //       }
-  //     }
-  //   } else {
-  //     unlinkedApplicationRoles = allApplicationRoles;
-  //   }
-  //   return [[linkedApplicationRoles, unlinkedApplicationRoles]];
-  // }
-
   async findOne(params: FindOneDataPayloadDto) {
     const res = await this.mainRepository.findOne({
       where: {
