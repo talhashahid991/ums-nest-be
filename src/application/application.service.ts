@@ -15,6 +15,7 @@ import { paginationDto } from 'src/utils/commonDtos.dto';
 import { isEmpty, isNumber } from 'lodash';
 import { FindOneDataPayloadDto } from './dto/find-one.dto';
 import { UpdateDataPayloadDto } from './dto/update.dto';
+import { DeleteDataPayloadDto } from './dto/delete.dto';
 
 @Injectable()
 export class ApplicationService {
@@ -142,26 +143,26 @@ export class ApplicationService {
     }
   }
 
-  // async delete(params: DeleteDataPayloadDto) {
-  //   const obj = await this.findOne({
-  //     listOfValuesId: params.listOfValuesId,
-  //   });
+  async delete(params: DeleteDataPayloadDto) {
+    const obj = await this.findOne({
+      applicationId: params.applicationId,
+    });
 
-  //   // If the record to update does not exist, throw a NotFoundException.
-  //   if (!obj) {
-  //     return RestResponse.notFound(params);
-  //   }
-  //   obj.dmlStatus = params['dmlStatus'];
-  //   obj.dmlTimestamp = params['dmlTimestamp'];
-  //   const res = await this.mainRepository.save({
-  //     ...obj,
-  //   });
-  //   await this.historyRepositry.save({ ...res });
-  //   if (res) {
-  //     return [res];
-  //   } else {
-  //     // If creation fails, throw a BadRequestException.
-  //     return RestResponse.error(params, TRY_AGAIN_LATER);
-  //   }
-  // }
+    // If the record to update does not exist, throw a NotFoundException.
+    if (!obj) {
+      return RestResponse.notFound(params);
+    }
+    obj.dmlStatus = params['dmlStatus'];
+    obj.dmlTimestamp = params['dmlTimestamp'];
+    const res = await this.mainRepository.save({
+      ...obj,
+    });
+    await this.historyRepositry.save({ ...res });
+    if (res) {
+      return [res];
+    } else {
+      // If creation fails, throw a BadRequestException.
+      return RestResponse.error(params, TRY_AGAIN_LATER);
+    }
+  }
 }
