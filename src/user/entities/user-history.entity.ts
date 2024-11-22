@@ -15,6 +15,7 @@ import {
 } from 'src/utils/constants';
 import { User } from './user.entity';
 import { ListOfValues } from 'src/list-of-values/entities/list-of-values.entity';
+import { Organization } from 'src/organization/entities/organization.entity';
 
 @Entity({ name: 'user_history' })
 export class UserHistory {
@@ -61,6 +62,14 @@ export class UserHistory {
     default: LID_SUBSCRIBER_ID,
   })
   lovUserTypeId: number;
+
+  @ManyToOne(() => Organization, (x) => x.organizationId)
+  @JoinColumn({ name: 'organization_id' })
+  @Column({
+    name: 'organization_id',
+    nullable: true,
+  })
+  organizationId: number;
 
   @ManyToOne(() => ListOfValues, (x) => x.listOfValuesId)
   @JoinColumn({ name: 'lov_email_verification_type_id' })

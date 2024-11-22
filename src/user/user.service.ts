@@ -175,6 +175,9 @@ export class UserService {
     if (!isEmpty(params?.lovEmailVerificationTypeId)) {
       sql += `r.lovEmailVerificationTypeId=${params?.lovEmailVerificationTypeId} AND `;
     }
+    if (!isEmpty(params?.organizationId)) {
+      sql += `r.organizationId=${params?.organizationId} AND `;
+    }
     if (!isEmpty(params?.packageId)) {
       sql += `r.packageId=${params?.packageId} AND `;
     }
