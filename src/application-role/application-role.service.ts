@@ -15,8 +15,11 @@ import { paginationDto } from 'src/utils/commonDtos.dto';
 import { isEmpty, isNumber } from 'lodash';
 import { FindOneDataPayloadDto } from './dto/find-one.dto';
 import { FindAllLinkedUnlinkedDataPayloadDto } from './dto/find-all-linked-unlinked.dto';
+<<<<<<< HEAD
 import { UpdateDataPayloadDto } from './dto/update.dto';
 import { DeleteDataPayloadDto } from './dto/delete.dto';
+=======
+>>>>>>> 827fe11dd7e29e72101d55663270c98047476c5d
 
 @Injectable()
 export class ApplicationRoleService {
@@ -111,6 +114,7 @@ export class ApplicationRoleService {
     return res;
   }
 
+<<<<<<< HEAD
   async findAllLinkedUnlinked(params: FindAllLinkedUnlinkedDataPayloadDto) {
     const allLinkedApplicationRoles = await this.mainRepository.query(
       `select ar.application_role_id, ar.title, bar.business_application_role_id, bar.application_role_id, bar.business_role_id, bar.dml_status 
@@ -119,6 +123,62 @@ export class ApplicationRoleService {
       AND 
       bar.business_role_id=${params.businessRoleId} AND bar.dml_status!=${LID_DELETE_ID}`,
     );
+=======
+  async findAllLinkedUnlinked(
+    params: FindAllLinkedUnlinkedDataPayloadDto,
+    pagination: paginationDto,
+  ) {
+    // find all applicationRoles from ApplicationRoles for given applicationId
+    let allApplicationRoles: any = await this.mainRepository.query(
+      ` SELECT ar.* FROM 
+      ApplicationRoles ar 
+      WHERE ar.applicationId = ${params?.applicationId} `);
+    allApplicationRoles = allApplicationRoles[0];
+    // find linked applicationRoles from BusinessApplicationRoles for given businessRoleId
+    let linkedApplicationRolesObjects: any =
+      await this.mainRepository.createQueryBuilder('ar')
+      .where(`ar.applicationId = ${params?.applicationId} AND bar.businessRoleId = ${params?.businessRoleId}`)
+      .leftJoinAndSelect('business_application_role', 'bar', 'ar.applicationRoleId = bar.applicationRoleId');
+    let unlinkedApplicationRoles = [];
+    let linkedApplicationRoles = [];
+    if (linkedApplicationRolesObjects.length) {
+      linkedApplicationRolesObjects = linkedApplicationRolesObjects[0];
+      // find unlinked applicationRoles by subtracting linkedApplicationRoles from allApplicationRoles
+      for (let applicationRole of allApplicationRoles) {
+        let isLinked: boolean = false;
+        for (let role of linkedApplicationRolesObjects) {
+          if (
+            applicationRole.applicationRoleId ===
+            role.applicationRoleId.applicationRoleId
+          ) {
+            isLinked = true;
+          }
+        }
+        if (isLinked) {
+          linkedApplicationRoles.push(applicationRole);
+        } else {
+          unlinkedApplicationRoles.push(applicationRole);
+        }
+      }
+    } else {
+      unlinkedApplicationRoles = allApplicationRoles;
+    }
+    return [[linkedApplicationRoles, unlinkedApplicationRoles]];
+  }
+
+  // async update(params: UpdateDataPayloadDto) {
+  //   // check if record exists
+  //   const ifRecordExists = await this.mainRepository.findOne({
+  //     where: [
+  //       {
+  //         title: params.title,
+  //         dmlStatus: Not(LID_DELETE_ID),
+  //         lovCategoryId: params.lovCategoryId,
+  //         listOfValuesId: Not(params.listOfValuesId),
+  //       },
+  //     ],
+  //   });
+>>>>>>> 827fe11dd7e29e72101d55663270c98047476c5d
 
     const allUnLinkedApplicationRoles = await this.mainRepository.query(
       `select ar.application_role_id, ar.title, bar.application_role_id as applicationRoleId, bar.business_role_id, bar.dml_status 
