@@ -21,8 +21,52 @@ export class User {
   @PrimaryGeneratedColumn({ name: 'user_id' })
   userId: number;
 
-  @Column({ name: 'email', nullable: false })
-  email: string;
+  @ManyToOne(() => ListOfValues, (x) => x.listOfValuesId)
+  @JoinColumn({ name: 'lov_user_type_id' })
+  @Column({
+    name: 'lov_user_type_id',
+    nullable: true,
+    default: LID_SUBSCRIBER_ID,
+  })
+  lovUserTypeId: number;
+
+  @ManyToOne(() => ListOfValues, (x) => x.listOfValuesId)
+  @JoinColumn({ name: 'lov_email_verification_type_id' })
+  @Column({
+    nullable: true,
+    name: 'lov_email_verification_type_id',
+    default: LID_NOT_VERIFIED_ID,
+  })
+  lovEmailVerificationTypeId?: number;
+
+  @ManyToOne(() => ListOfValues, (x) => x.listOfValuesId)
+  @JoinColumn({ name: 'lov_gender_type_id' })
+  @Column({ nullable: true, name: 'lov_gender_type_id' })
+  lovGenderTypeId?: number;
+
+  @ManyToOne(() => Organization, (x) => x.organizationId)
+  @JoinColumn({ name: 'organization_id' })
+  @Column({
+    name: 'organization_id',
+    nullable: true,
+  })
+  organizationId: number;
+
+  // @ManyToOne(() => Organization, (x) => x.organizationId)
+  // @JoinColumn({ name: 'organization_id' })
+  @Column({
+    name: 'department_id',
+    nullable: true,
+  })
+  department: number;
+
+  // @ManyToOne(() => Package, (x) => x.packageId)
+  // @JoinColumn({ name: 'package_id' })
+  @Column({ nullable: true, name: 'package_id' })
+  packageId?: number;
+
+  // @Column({ name: 'email', nullable: false })
+  // email: string;
 
   @Column({ name: 'first_name' })
   firstName: string;
@@ -45,32 +89,6 @@ export class User {
   @Column({ type: 'date', name: 'date_of_birth', nullable: true })
   dateOfBirth?: string;
 
-  @ManyToOne(() => ListOfValues, (x) => x.listOfValuesId)
-  @JoinColumn({ name: 'lov_user_type_id' })
-  @Column({
-    name: 'lov_user_type_id',
-    nullable: true,
-    default: LID_SUBSCRIBER_ID,
-  })
-  lovUserTypeId: number;
-
-  @ManyToOne(() => Organization, (x) => x.organizationId)
-  @JoinColumn({ name: 'organization_id' })
-  @Column({
-    name: 'organization_id',
-    nullable: true,
-  })
-  organizationId: number;
-
-  @ManyToOne(() => ListOfValues, (x) => x.listOfValuesId)
-  @JoinColumn({ name: 'lov_email_verification_type_id' })
-  @Column({
-    nullable: true,
-    name: 'lov_email_verification_type_id',
-    default: LID_NOT_VERIFIED_ID,
-  })
-  lovEmailVerificationTypeId?: number;
-
   @Column({
     nullable: true,
     type: 'timestamptz',
@@ -78,26 +96,28 @@ export class User {
   })
   emailVerificationTimestamp?: string;
 
-  @ManyToOne(() => ListOfValues, (x) => x.listOfValuesId)
-  @JoinColumn({ name: 'lov_gender_type_id' })
-  @Column({ nullable: true, name: 'lov_gender_type_id' })
-  lovGenderTypeId?: number;
+  // @ManyToOne(() => Package, (x) => x.packageId)
+  // @JoinColumn({ name: 'package_id' })
+  @Column({ nullable: true, name: 'default_address_id' })
+  defaultAddressId?: number;
 
   // @ManyToOne(() => Package, (x) => x.packageId)
   // @JoinColumn({ name: 'package_id' })
-  @Column({ nullable: true, name: 'package_id' })
-  packageId?: number;
+  @Column({ nullable: true, name: 'default_email_id' })
+  defaultEmailId?: number;
 
-  @Column({ type: 'timestamptz', name: 'created_at', nullable: true })
-  createdAt?: string;
-
-  @Column({ type: 'timestamptz', name: 'updated_at', nullable: true })
-  updatedAt?: string;
+  // @ManyToOne(() => Package, (x) => x.packageId)
+  // @JoinColumn({ name: 'package_id' })
+  @Column({ nullable: true, name: 'default_phone_number_id' })
+  defaultPhoneNumberId?: number;
 
   @ManyToOne(() => ListOfValues, (x) => x.listOfValuesId)
   @JoinColumn({ name: 'lov_status_id' })
   @Column({ name: 'lov_status_id', nullable: false, default: LID_ACTIVE_ID })
   lovStatusId?: number;
+
+  @Column({ type: 'timestamptz', name: 'created_at', nullable: true })
+  createdAt?: string;
 
   // dml
 
