@@ -30,14 +30,6 @@ export class Email {
   })
   userId: number;
 
-  @ManyToOne(() => ListOfValues, (x) => x.listOfValuesId)
-  @JoinColumn({ name: 'lov_status_id' })
-  @Column({
-    nullable: true,
-    name: 'lov_status_id',
-  })
-  lovStatusId?: number;
-
   @Column({ name: 'email' })
   email: string;
 
