@@ -16,10 +16,19 @@ import {
 import { ListOfValues } from 'src/list-of-values/entities/list-of-values.entity';
 import { Organization } from 'src/organization/entities/organization.entity';
 import { User } from 'src/user/entities/user.entity';
+import { Email } from './email.entity';
 
-@Entity({ name: 'email' })
-export class Email {
-  @PrimaryGeneratedColumn({ name: 'email_id' })
+@Entity({ name: 'email_history' })
+export class EmailHistory {
+  @PrimaryGeneratedColumn({ name: 'email_history_id' })
+  emailHistoryId: number;
+
+  @ManyToOne(() => Email, (x) => x.emailId)
+  @JoinColumn({ name: 'email_id' })
+  @Column({
+    name: 'email_id',
+    nullable: true,
+  })
   emailId: number;
 
   @ManyToOne(() => User, (x) => x.userId)
