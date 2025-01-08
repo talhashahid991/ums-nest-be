@@ -114,19 +114,33 @@ export class UserService {
 
   // user creation by admin
   async create(params: CreateDataPayloadDto) {
-    // check if record exists
-    const ifRecordExists = await this.mainRepository.findOne({
+    // check if record exists with username
+    const ifRecordWithUsernameExists = await this.mainRepository.findOne({
       where: [
         {
           username: params.username,
-          email: params.email,
+          // email: params.email,
           dmlStatus: Not(LID_DELETE_ID),
         },
       ],
     });
-    if (ifRecordExists) {
-      return RestResponse.notFound(params, RECORD_EXISTS);
+    if (ifRecordWithUsernameExists) {
+      return RestResponse.notFound(params, USERNAME_IN_USE);
     }
+
+    // check if record exists with email
+    // const ifRecordWithEmailExists = await this.mainRepository.findOne({
+    //   where: [
+    //     {
+    //       username: params.username,
+    //       // email: params.email,
+    //       dmlStatus: Not(LID_DELETE_ID),
+    //     },
+    //   ],
+    // });
+    // if (ifRecordWithEmailExists) {
+    //   return RestResponse.notFound(params, EMAIL_IN_USE);
+    // }
     // create a new record
     const res = await this.mainRepository.save({ ...params });
     // create history record

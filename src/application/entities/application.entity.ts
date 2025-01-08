@@ -1,6 +1,4 @@
 import { ListOfValues } from 'src/list-of-values/entities/list-of-values.entity';
-import { LovCategory } from 'src/lov-category/entities/lov-category.entity';
-import { Organization } from 'src/organization/entities/organization.entity';
 import { User } from 'src/user/entities/user.entity';
 import { LID_ACTIVE_ID, LID_CREATED_ID } from 'src/utils/constants';
 import {
